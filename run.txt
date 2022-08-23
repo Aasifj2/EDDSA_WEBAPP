@@ -1,0 +1,1 @@
+go run acknowledger.go commitment.go elgamal.go Helper.go interface.go keygen.go main.go mdns.go message.go p2p.go receiver.go schnorr.go test.go vss.go

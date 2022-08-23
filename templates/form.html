@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
         <body>
-                <form method="POST" action="/display">
+                {{if .Success}}
+                <h2>Your IP: <b>{{.Mydata.MyIp}}</b><br></h2>
+                <form method="POST" action="/display">                   
                         <label>ITEM 1</label><input type="text" name="1">
                         <label>ITEM 2</label><input type="text" name="2"><br>
                         <input type="submit" value="Create">
                         
                 </form>
+                {{end}}
         </body>
 </html>

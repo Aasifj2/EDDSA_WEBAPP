@@ -1,0 +1,108 @@
+package main
+
+import (
+	"log"
+	"net/http"
+	"strings"
+	"time"
+
+	//"net/http"
+
+	"github.com/gorilla/mux"
+
+	//"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
+
+var r *mux.Router
+
+func P2p_func() {
+
+	if start_p2p_flag == 1 {
+		return
+	} else {
+		go start_p2p()
+		start_p2p_flag = 1
+	}
+	//c.Status(http.StatusOK)
+}
+
+func test_connection(c *gin.Context) {
+
+}
+
+func id_func(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    http.StatusOK,
+		"Host IP": p2p.Host_ip, //.Host.ID()),
+	})
+	// return
+}
+
+func defaults() {
+	status_struct.Chan = "81247"
+	start_p2p_flag = 0
+
+}
+
+func gen_keyshares(c *gin.Context) {
+
+	execute_send = 1
+	var TEST test_struct
+	c.BindJSON(&TEST)
+	peer_details_list = strings.Split(TEST.Peer_list, ",")
+	log.Println("Starting")
+	// time.Sleep(time.Second * 3)
+	c.JSON(http.StatusOK, gin.H{
+		"All ok": all_ok,
+	})
+	test_conn()
+
+}
+
+func main() {
+
+	defaults()
+	p2p = *start_p2p()
+	if debug == true {
+		local()
+
+	} else {
+		keygen_Stream_listener(p2p.Host)
+		//Start Acknowledger
+		host_acknowledge(p2p.Host)
+		connection_Stream_listener(p2p.Host)
+		// p2p = *start_p2p()
+		time.Sleep(time.Second * 10)
+		// router := gin.Default()
+		// router.Use(cors.New(cors.Config{
+		// 	// AllowOrigins:    []string{"http://localhost:8080", "http://127.0.0.1:3000"},
+		// 	AllowMethods:     []string{"POST", "GET"},
+		// 	AllowHeaders:     []string{"Origin"},
+		// 	AllowAllOrigins:  true,
+		// 	AllowCredentials: true,
+		// 	MaxAge:           12 * time.Hour,
+		// }))
+		// v1 := router.Group("/api")
+		// {
+		// 	v1.GET("/start_p2p", p2p_func)
+		// 	v1.GET("/get_ID", id_func)
+		// 	// v1.POST("/test_connection", test_connection)
+		// 	v1.POST("/gen_keyshares", gen_keyshares)
+		// }
+
+		// router.Run(port)
+		r = mux.NewRouter()
+
+		fs := http.FileServer(http.Dir("assets"))
+		r.PathPrefix("/assets").Handler(http.StripPrefix("/assets", fs))
+		r.HandleFunc("/", Index)
+		// r.HandleFunc("/css1", CSS1)
+		// r.HandleFunc("/css2", CSS2)
+		r.HandleFunc("/dealer", DisplayForm)
+		r.HandleFunc("/display", DisplayData)
+		http.ListenAndServe(":8080", r)
+
+	}
+}
