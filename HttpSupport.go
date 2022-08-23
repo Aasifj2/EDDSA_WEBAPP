@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"text/template"
 )
 
 var tmpl *template.Template
 
-type Data2 struct {
-	Item1 string
-	Item2 string
-	Item3 string
+type Dealer_Data struct {
+	IP_addreses string
+	Threshold_T int
 }
 
 type MyInfoStruct struct {
@@ -64,14 +64,14 @@ func DisplayForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisplayData(w http.ResponseWriter, r *http.Request) {
-	recieved_data := Data2{
-		Item1: r.FormValue("1"),
-		Item2: r.FormValue("2"),
-		Item3: Dummy_api(),
+	tempT, _ := strconv.Atoi(r.FormValue("2"))
+	recieved_data := Dealer_Data{
+		IP_addreses: r.FormValue("1"),
+		Threshold_T: tempT,
 	}
 	tmpl.ExecuteTemplate(w, "display.html", struct {
 		Success bool
-		Mydata  Data2
+		Mydata  Dealer_Data
 	}{true, recieved_data})
 	// tmpl.ExecuteTemplate(w, "display.html", struct {
 	// 	Mydata Data2

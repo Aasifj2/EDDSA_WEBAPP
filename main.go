@@ -46,17 +46,17 @@ func defaults() {
 
 }
 
-func gen_keyshares(c *gin.Context) {
+func gen_keyshares() {
 
 	execute_send = 1
 	var TEST test_struct
-	c.BindJSON(&TEST)
+	//c.BindJSON(&TEST)
 	peer_details_list = strings.Split(TEST.Peer_list, ",")
 	log.Println("Starting")
 	// time.Sleep(time.Second * 3)
-	c.JSON(http.StatusOK, gin.H{
-		"All ok": all_ok,
-	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"All ok": all_ok,
+	// })
 	test_conn()
 
 }
@@ -74,7 +74,7 @@ func main() {
 		host_acknowledge(p2p.Host)
 		connection_Stream_listener(p2p.Host)
 		// p2p = *start_p2p()
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 2)
 		// router := gin.Default()
 		// router.Use(cors.New(cors.Config{
 		// 	// AllowOrigins:    []string{"http://localhost:8080", "http://127.0.0.1:3000"},
@@ -101,7 +101,7 @@ func main() {
 		// r.HandleFunc("/css1", CSS1)
 		// r.HandleFunc("/css2", CSS2)
 		r.HandleFunc("/dealer", DisplayForm)
-		r.HandleFunc("/display", DisplayData)
+		r.HandleFunc("/keygen", DisplayData)
 		http.ListenAndServe(":8080", r)
 
 	}

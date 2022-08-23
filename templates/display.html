@@ -3,9 +3,8 @@
         <body>
                 {{if .Success}}
                 <h2>Welcome to Data Displayer</h2>
-                <b>ITEM1:</b>{{.Mydata.Item1}}<br>
-                <b>ITEM2:</b>{{.Mydata.Item2}}<br>
-                <b>ITEM3:</b>{{.Mydata.Item3}}<br>
+                <b>IPs:</b>{{.Mydata.IP_addreses}}<br>
+                <b>T:</b>{{.Mydata.Threshold_T}}<br>
                 {{else}}
                 <h3>You've Failed </h3>
                 {{end}}
