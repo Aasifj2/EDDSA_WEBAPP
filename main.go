@@ -46,12 +46,13 @@ func defaults() {
 
 }
 
-func gen_keyshares() {
+func gen_keyshares(ip_list string) {
 
 	execute_send = 1
-	var TEST test_struct
-	//c.BindJSON(&TEST)
-	peer_details_list = strings.Split(TEST.Peer_list, ",")
+	// var TEST test_struct
+	// c.BindJSON(&TEST)
+	// peer_details_list = strings.Split(TEST.Peer_list, ",")
+	peer_details_list = strings.Split(ip_list, ",")
 	log.Println("Starting")
 	// time.Sleep(time.Second * 3)
 	// c.JSON(http.StatusOK, gin.H{

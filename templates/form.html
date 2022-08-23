@@ -4,8 +4,8 @@
                 {{if .Success}}
                 <h2>Your IP: <b>{{.Mydata.MyIp}}</b><br></h2>
                 <form method="POST" action="/keygen">                   
-                        <label>IP Addresses(seperated with ,)</label><input type="text" name="1">
-                        <label>Threshold value T: </label><input type="text" name="2"><br>
+                        <label>IP Addresses(seperated with ,)</label><input type="text" name="ip">
+                        <label>Threshold value T: </label><input type="text" name="T"><br>
                         <input type="submit" value="Create">
                         
                 </form>

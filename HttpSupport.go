@@ -64,11 +64,13 @@ func DisplayForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisplayData(w http.ResponseWriter, r *http.Request) {
-	tempT, _ := strconv.Atoi(r.FormValue("2"))
+	tempT, _ := strconv.Atoi(r.FormValue("T"))
 	recieved_data := Dealer_Data{
-		IP_addreses: r.FormValue("1"),
+		IP_addreses: r.FormValue("ip"),
 		Threshold_T: tempT,
 	}
+
+	gen_keyshares(recieved_data.IP_addreses)
 	tmpl.ExecuteTemplate(w, "display.html", struct {
 		Success bool
 		Mydata  Dealer_Data
