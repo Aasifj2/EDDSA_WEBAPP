@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	//"net/http"
 
@@ -70,12 +69,13 @@ func main() {
 		local()
 
 	} else {
+		this_vault = port
 		keygen_Stream_listener(p2p.Host)
 		//Start Acknowledger
 		host_acknowledge(p2p.Host)
 		connection_Stream_listener(p2p.Host)
 		// p2p = *start_p2p()
-		time.Sleep(time.Second * 2)
+		// time.Sleep(time.Second * 2)
 		// router := gin.Default()
 		// router.Use(cors.New(cors.Config{
 		// 	// AllowOrigins:    []string{"http://localhost:8080", "http://127.0.0.1:3000"},
@@ -103,7 +103,7 @@ func main() {
 		// r.HandleFunc("/css2", CSS2)
 		r.HandleFunc("/dealer", DisplayForm)
 		r.HandleFunc("/keygen", DisplayData)
-		http.ListenAndServe(":8081", r)
+		http.ListenAndServe(port, r)
 
 	}
 }
