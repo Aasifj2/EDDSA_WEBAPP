@@ -61,4 +61,6 @@ var vault_map = make(map[string]string)
 var execute_send = 0
 
 var n = 0
+var Threshold int
+
 var port = ":8081"

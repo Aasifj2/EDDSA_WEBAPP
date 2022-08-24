@@ -51,6 +51,7 @@ func test_conn() {
 			Peers:      peer_details_list,
 			Vault_name: this_vault,
 			Sender:     p2p.Host_ip,
+			T:          Threshold,
 		}
 
 		s, err := p2p.Host.NewStream(p2p.Ctx, connect_to.ID, "/conn/0.0.1")

@@ -289,8 +289,8 @@ func keygen() {
 	Peer_Count := len(peer_details_list) - 1
 	fmt.Println("PEERCOUNT:", Peer_Count)
 
-	var T int64 = 2
-
+	var T int64 = int64(Threshold)
+	fmt.Println("THRESHOLD:", T)
 	//./zebpay -f first phase
 	//function
 	// 1. first phase - Setup
@@ -301,7 +301,7 @@ func keygen() {
 	//THIRD - Generation for shares --path
 	//FOURTH - RUN P2P broadcasting the shares & presigning
 
-	fmt.Println(peer_details_list)
+	// fmt.Println(peer_details_list)
 	var choice int
 	choice = 1
 	for {

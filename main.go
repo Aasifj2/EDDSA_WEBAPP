@@ -69,7 +69,7 @@ func main() {
 		local()
 
 	} else {
-		this_vault = port
+		// this_vault = port
 		keygen_Stream_listener(p2p.Host)
 		//Start Acknowledger
 		host_acknowledge(p2p.Host)

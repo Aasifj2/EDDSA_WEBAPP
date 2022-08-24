@@ -15,7 +15,8 @@ type Dealer_Data struct {
 }
 
 type MyInfoStruct struct {
-	MyIp string
+	VaultID string
+	MyIp    string
 	//Make Every Property start with Capital letter
 }
 
@@ -40,6 +41,7 @@ func Dummy_api() string {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
+
 	tmpl.ExecuteTemplate(w, "index.html", nil)
 
 }
@@ -48,8 +50,11 @@ func CSS2(w http.ResponseWriter, r *http.Request) {
 }
 func DisplayForm(w http.ResponseWriter, r *http.Request) {
 	//P2p_func()
+	this_vault = r.FormValue("vaultID")
+
 	recieved_data := MyInfoStruct{
-		MyIp: p2p.Host_ip,
+		VaultID: r.FormValue("vaultID"),
+		MyIp:    p2p.Host_ip,
 	}
 
 	// recieved_data := Data2{
@@ -69,7 +74,8 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 		IP_addreses: r.FormValue("ip"),
 		Threshold_T: tempT,
 	}
-
+	Threshold = tempT
+	fmt.Println("ISIDEEEEEEE::::", Threshold)
 	gen_keyshares(recieved_data.IP_addreses)
 	tmpl.ExecuteTemplate(w, "display.html", struct {
 		Success bool

@@ -45,6 +45,9 @@ func process_connection(s network.Stream, h host.Host) error {
 		peer_details_list = message_receive.Peers
 		vault := message_receive.Vault_name
 		vault_map[vault] = message_receive.Sender
+		if Threshold == 0 {
+			Threshold = message_receive.T
+		}
 	}
 	if execute_send == 0 {
 		execute_send = 1

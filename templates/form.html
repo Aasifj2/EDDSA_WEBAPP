@@ -2,7 +2,9 @@
 <html>
         <body>
                 {{if .Success}}
+                <h1>VAULT ID: <b>{{.Mydata.VaultID}}</b></h1><br>
                 <h2>Your IP: <b>{{.Mydata.MyIp}}</b><br></h2>
+                
                 <form method="POST" action="/keygen">                   
                         <label>IP Addresses(seperated with ,)</label><input type="text" name="ip">
                         <label>Threshold value T: </label><input type="text" name="T"><br>

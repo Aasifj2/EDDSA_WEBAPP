@@ -19,4 +19,5 @@ type message_conn struct {
 	Peers      []string
 	Vault_name string
 	Sender     string
+	T          int
 }
