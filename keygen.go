@@ -356,6 +356,9 @@ func keygen() {
 			f1, _ := os.OpenFile("Data/"+peer_number+"/SSK.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 			encoding.WriteHexScalar(curve, f1, SSK)
 			f1.Close()
+			f1, _ = os.OpenFile("Data/"+peer_number+"/SPK.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+			encoding.WriteHexPoint(curve, f1, SPK)
+			f1.Close()
 			//storing the Elgamal Secret key to private folder
 
 			f3, _ := os.OpenFile("Data/"+peer_number+"/ESK.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
@@ -372,6 +375,8 @@ func keygen() {
 			log.Println(peer_details_list)
 			send_data(peer_details_list, string(file), strconv.Itoa(my_index), protocolID)
 			wait_until(1)
+
+			//VERIFICATION FOR ELGAMAL KEYS AS WELL
 
 			// case 3:
 			/****************Commiting SSK and Broadcasting KGC  ****************/
@@ -721,6 +726,7 @@ func keygen() {
 			file5, _ := os.Create(path5 + "/G.txt")
 			encoding.WriteHexScalar(curve, file5, G)
 
+			//BROADCAST GROUP PUBLIC KEY
 			choice = 2
 			//G-> input to sign t unknwn
 
@@ -838,12 +844,12 @@ func keygen() {
 
 			// case 12:
 			//vss k=threshold
-			f2, _ := os.Open("Received/Signing/" + peer_number + "/G.txt")
-			x_i, _ := encoding.ReadHexScalar(curve, f2)
-			f2.Close()
+			// f2, _ := os.Open("Received/Signing/" + peer_number + "/G.txt")
+			// x_i, _ := encoding.ReadHexScalar(curve, f2)
+			// f2.Close()
 			// x_i := curve.Scalar().Pick(curve.RandomStream())
 
-			Set_secret_sign(x_i)
+			//Set_secret_sign(x_i)
 
 			poly := []kyber.Scalar{}  // to store coefficients
 			share := []kyber.Scalar{} // to store share
@@ -865,8 +871,8 @@ func keygen() {
 				share = append(share, curve.Scalar().Zero())
 			}
 
-			// to generate coefficients of the polynomial
-			Generate_Polynomial_coefficients(T, poly, peer_number, x_i, "vss/Signing/"+peer_number)
+			// to generate coefficients of the polynomial         //r_i
+			Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "vss/Signing/"+peer_number)
 			// fmt.Println("COFFE", poly[0].String(), "\n", poly[1].String(), "\n")
 
 			Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/Signing/"+peer_number)
@@ -881,7 +887,6 @@ func keygen() {
 			status_struct.Phase = 13
 			for i = 0; i < T; i++ {
 				send_data(peer_details_list, alphas[i].String(), fmt.Sprint(i), protocolID)
-
 			}
 
 			wait_until(13)
@@ -1023,6 +1028,7 @@ func keygen() {
 			T_arr := [...]int{1}
 			combine_T_Unknown(T_arr[:], peer_number)
 			choice = 291
+		case 5: //verify single
 		case 17:
 			Key_Refresh(T, int64(Peer_Count), peer_number, peer_details_list, protocolID)
 		case 29:
