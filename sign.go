@@ -748,7 +748,7 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	// time.Sleep(time.Second * 2)
 }
 
-func Signing(peer_number string) {
+func Signing(peer_number, Message string) {
 	var protocolID protocol.ID = "/keygen/0.0.1"
 
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
@@ -756,13 +756,12 @@ func Signing(peer_number string) {
 	file, _ := os.Open("Data/" + peer_number + "/Signing/r_i.txt")
 	R_i, _ := encoding.ReadHexScalar(curve, file)
 
-	file, _ = os.Open("Received/Signing/" + peer_number + "/G.txt")
+	file, _ = os.Open("Received/" + peer_number + "/G.txt")
 	x_i, _ := encoding.ReadHexScalar(curve, file)
 
 	file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
 	U, _ := encoding.ReadHexPoint(curve, file)
 
-	Message := "Hello Aasif Sign"
 	V_i := Signing_T_Unkown(U, x_i, R_i, Message)
 
 	file, _ = os.Create("Data/" + peer_number + "/Signing/V_i.txt")

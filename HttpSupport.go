@@ -13,9 +13,9 @@ import (
 var tmpl *template.Template
 
 type Keygen_Data struct {
-	IP_addreses string
-	Threshold_T int
-	GroupKey    string
+	IP_addresses string
+	Threshold_T  int
+	GroupKey     string
 }
 
 type MyInfoStruct struct {
@@ -73,23 +73,23 @@ func DisplayForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisplayData(w http.ResponseWriter, r *http.Request) {
+
 	tempT, _ := strconv.Atoi(r.FormValue("T"))
 	IPs := r.FormValue("ip")
 
 	Threshold = tempT
-	fmt.Println("ISIDEEEEEEE::::", Threshold)
 	gen_keyshares(IPs)
 	peer_number := fmt.Sprint(my_index)
 	path := "Received/" + peer_number
 	file, _ := os.Open(path + "/GroupKey.txt")
 	GK, _ := encoding.ReadHexPoint(curve, file)
-
+	fmt.Println("GROUP KEY:", GK.String())
 	recieved_data := Keygen_Data{
-		IP_addreses: r.FormValue("ip"),
-		Threshold_T: tempT,
-		GroupKey:    GK.String(),
+		IP_addresses: IPs,
+		Threshold_T:  tempT,
+		GroupKey:     GK.String(),
 	}
-	tmpl.ExecuteTemplate(w, "presigning.html", struct {
+	tmpl.ExecuteTemplate(w, "signing.html", struct {
 		Success bool
 		Mydata  Keygen_Data
 	}{true, recieved_data})
@@ -99,5 +99,15 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 }
 
 // func Init_vault(){
+func Sign_Message(w http.ResponseWriter, r *http.Request) {
+	Message := r.FormValue("message")
+	peer_number := fmt.Sprint(my_index)
+	Signing(peer_number, Message)
+
+}
+
+func DisplayNonDealer(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "nondealer.html", nil)
+}
 
 // }
