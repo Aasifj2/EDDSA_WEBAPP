@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <link rel="stylesheet" media="screen" href="../assets/css/style.css">
+                
+        </head>
+
+        <body>
+                <div id="particles-js">
+                        <div class="text">
+                                {{if .Success}}
+                                <h1>VAULT ID: <b>{{.Mydata.VaultID}}</b></h1><br>
+                                <h2>Your IP: <b>{{.Mydata.MyIp}}</b><br></h2>
+                                
+                                <form method="POST" action="/keygen">                   
+                                        <label>IP Addresses(seperated with ,)</label><br><input type="text" name="ip" style="width:80%"><br>
+                                        <label>Threshold value T: </label><br><input type="text" name="T"><br><br>
+                                        <input type="submit" value="Start-KeyGen">
+                                        
+                                </form>
+                                <script src="../assets/js/particles.js"></script>
+                                <script src="../assets/js/app.js"></script>  
+                                <script src="../assets/js/ths.js"></script> 
+                        </div>
+                </div>
+                {{end}}
+
+        </body>
+</html>

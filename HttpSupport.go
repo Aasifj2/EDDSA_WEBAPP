@@ -3,15 +3,19 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"text/template"
+
+	"gopkg.in/dedis/kyber.v2/util/encoding"
 )
 
 var tmpl *template.Template
 
-type Dealer_Data struct {
+type Keygen_Data struct {
 	IP_addreses string
 	Threshold_T int
+	GroupKey    string
 }
 
 type MyInfoStruct struct {
@@ -62,7 +66,7 @@ func DisplayForm(w http.ResponseWriter, r *http.Request) {
 	// 	Item2: "hello",
 	// 	Item3: Dummy_api(),
 	// }
-	tmpl.ExecuteTemplate(w, "form.html", struct {
+	tmpl.ExecuteTemplate(w, "dealer.html", struct {
 		Success bool
 		Mydata  MyInfoStruct
 	}{true, recieved_data})
@@ -70,16 +74,24 @@ func DisplayForm(w http.ResponseWriter, r *http.Request) {
 
 func DisplayData(w http.ResponseWriter, r *http.Request) {
 	tempT, _ := strconv.Atoi(r.FormValue("T"))
-	recieved_data := Dealer_Data{
-		IP_addreses: r.FormValue("ip"),
-		Threshold_T: tempT,
-	}
+	IPs := r.FormValue("ip")
+
 	Threshold = tempT
 	fmt.Println("ISIDEEEEEEE::::", Threshold)
-	gen_keyshares(recieved_data.IP_addreses)
-	tmpl.ExecuteTemplate(w, "display.html", struct {
+	gen_keyshares(IPs)
+	peer_number := fmt.Sprint(my_index)
+	path := "Received/" + peer_number
+	file, _ := os.Open(path + "/GroupKey.txt")
+	GK, _ := encoding.ReadHexPoint(curve, file)
+
+	recieved_data := Keygen_Data{
+		IP_addreses: r.FormValue("ip"),
+		Threshold_T: tempT,
+		GroupKey:    GK.String(),
+	}
+	tmpl.ExecuteTemplate(w, "presigning.html", struct {
 		Success bool
-		Mydata  Dealer_Data
+		Mydata  Keygen_Data
 	}{true, recieved_data})
 	// tmpl.ExecuteTemplate(w, "display.html", struct {
 	// 	Mydata Data2

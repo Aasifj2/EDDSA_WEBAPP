@@ -8,10 +8,12 @@
                 <div id="particles-js">
                 {{if .Success}}
                         <div class="text">
-                                <h1>GROUP KEY: <b>{{.Keygen_data.GK}}</b></h1><br>
-                                <h2>My Share: <b>{{.Keygen_data.Share}}</b><br></h2>
-                                <h2>Total Users: <b>{{.Keygen_data.n}}</b><br></h2>
-                                <h2>Threshold: <b>{{.Keygen_data.T}}</b><br></h2>
+                        
+                                <h1>GROUP KEY: <b>{{.Keygen_Data.GroupKey}}</b></h1><br>
+                                <!-- <h2>My Share: <b>{{.Keygen_data.Share}}</b><br></h2> -->
+                                <!-- <h2>Total Users: <b>{{.Keygen_data.n}}</b><br></h2> -->
+                                <h2>Threshold: <b>{{.Keygen_Data.Threshold_T}}</b><br></h2>
+                                <h3>IPs:<b>{{.Keygen_Data.IP_adresses}}</b></h3>
 
                                 <h1>Cick The Pre-Signing Button To Initiate the <br>Pre-Signing Process</h1>
                                 

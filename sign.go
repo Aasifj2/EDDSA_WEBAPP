@@ -123,15 +123,19 @@ func Broadcast_Ui(peer_number int64, U_i kyber.Point) {
 }
 
 func combine_T_Unknown(T_arr []int, peer_number string) {
+	Peer_Count := len(peer_details_list) - 1
 	l := len(T_arr)
 	var sum kyber.Scalar = curve.Scalar().Zero()
 	// err := os.MkdirAll("Received/Signing/Combine", os.ModePerm)
 	// if err != nil {
 	// 	panic(err)
 	// }
-	for i := 0; i < l; i++ {
+	for i := 0; i <= Peer_Count; i++ {
 		path := "Broadcast/" + fmt.Sprint(i) + "/Signing/V_i.txt"
-		file, _ := os.Open(path)
+		file, err := os.Open(path)
+		if err != nil {
+			continue
+		}
 		Lambda_i := Lambda(int64(l), int64(i))
 		V_i, _ := encoding.ReadHexScalar(curve, file)
 		prod := Lambda_i.Mul(Lambda_i, V_i)
