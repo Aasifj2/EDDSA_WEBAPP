@@ -476,3 +476,24 @@ func Recieve_Share_sign(peer_number string, Peer_Count int64) {
 
 	}
 }
+
+func verify_final_sign(V kyber.Scalar, U kyber.Point, message string, GK kyber.Point) bool {
+
+	//V is sum of all V_i's
+	//U is sum of all U_i's
+	//GK is sum of all alpha[0] (group key)
+
+	t1 := curve.Point().Mul(V, g)
+	h := Hash(message)
+	temp := curve.Point().Mul(h, GK)
+	t2 := temp.Add(temp, U)
+
+	fmt.Println(t1)
+	fmt.Println(t2)
+	if t1.Equal(t2) {
+		return true
+	} else {
+		return false
+	}
+
+}

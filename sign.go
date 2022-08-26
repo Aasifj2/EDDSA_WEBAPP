@@ -143,7 +143,8 @@ func combine_T_Unknown(T_arr []int, peer_number string) {
 	}
 	fmt.Println("Sum of all V_i:", sum.String())
 	file, _ := os.OpenFile("Received/Signing/"+peer_number+"/V.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
-	fmt.Fprint(file, sum.String())
+	encoding.WriteHexScalar(curve, file, sum)
+
 }
 
 func combine_T_known(T_arr []int) {
@@ -752,6 +753,7 @@ func Signing(peer_number, Message string) {
 
 	fmt.Println("MESSAGE TO SIGN:", Message)
 	var protocolID protocol.ID = "/keygen/0.0.1"
+	Peer_Count := len(peer_details_list) - 1
 
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
 
@@ -787,6 +789,18 @@ func Signing(peer_number, Message string) {
 	// choice = 4
 	// time.Sleep(time.Second * 2)
 	fmt.Println("************ COMBINATION PHASE ****************")
-	T_arr := [...]int{1}
+	T_arr := [...]int{1} //not actually used
 	combine_T_Unknown(T_arr[:], peer_number)
+	fmt.Println("************ VERIFYING ****************")
+	file, _ = os.Open("Received/Signing/" + peer_number + "/V.txt")
+	V, _ := encoding.ReadHexScalar(curve, file)
+
+	GK := Get_Group_Key(int64(Peer_Count))
+	res := verify_final_sign(V, U, Message, GK)
+	if res {
+		fmt.Println("SUCCESS VERIFICATION OF SIGNATURE")
+	} else {
+		fmt.Println("FAILED TO VERIFIY")
+	}
+
 }
