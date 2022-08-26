@@ -271,6 +271,10 @@ func check(peer_number string, f_i kyber.Scalar, T int64, alphas []kyber.Point) 
 
 //Rework to common message sending function
 func keygen() {
+	// if keygenFlag {
+	// 	return
+	// }
+	// keygenFlag = true
 	// peer_details_list := peer_details_list
 
 	//current_flag = "1"
@@ -288,9 +292,10 @@ func keygen() {
 	peer_number := fmt.Sprint(my_index)
 	Peer_Count := len(peer_details_list) - 1
 	fmt.Println("PEERCOUNT:", Peer_Count)
-
+	fmt.Println("MYINDEX:", peer_number)
 	var T int64 = int64(Threshold)
 	fmt.Println("THRESHOLD:", T)
+	fmt.Println(peer_details_list)
 	//./zebpay -f first phase
 	//function
 	// 1. first phase - Setup
@@ -1104,7 +1109,7 @@ func send_data(peer_details_list []string, value string, name string, protocolID
 
 		// log.Println(peer_details_list)
 		// log.Println(i, p2p.Host_ip, item, my_index)
-		log.Println(i, my_index, p2p.Host_ip, item)
+		//log.Println(i, my_index, p2p.Host_ip, item)
 		if i == my_index {
 			continue
 		}

@@ -749,6 +749,8 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 }
 
 func Signing(peer_number, Message string) {
+
+	fmt.Println("MESSAGE TO SIGN:", Message)
 	var protocolID protocol.ID = "/keygen/0.0.1"
 
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
@@ -770,6 +772,7 @@ func Signing(peer_number, Message string) {
 	//Broadcasting V_i
 	status_struct.Phase = 15
 
+	fmt.Println(this_vault, my_index, peer_details_list)
 	tosend, _ := encoding.ScalarToStringHex(curve, V_i)
 	send_data(peer_details_list, tosend, "V_i", protocolID)
 

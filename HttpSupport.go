@@ -55,7 +55,7 @@ func CSS2(w http.ResponseWriter, r *http.Request) {
 func DisplayForm(w http.ResponseWriter, r *http.Request) {
 	//P2p_func()
 	this_vault = r.FormValue("vaultID")
-
+	fmt.Println("vault:", this_vault)
 	recieved_data := MyInfoStruct{
 		VaultID: r.FormValue("vaultID"),
 		MyIp:    p2p.Host_ip,
@@ -107,6 +107,8 @@ func Sign_Message(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisplayNonDealer(w http.ResponseWriter, r *http.Request) {
+	this_vault = r.FormValue("vaultID2")
+	fmt.Println("VALULT ND:", this_vault)
 	tmpl.ExecuteTemplate(w, "nondealer.html", nil)
 }
 

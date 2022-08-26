@@ -52,35 +52,38 @@ func process_connection(s network.Stream, h host.Host) error {
 	if execute_send == 0 {
 		execute_send = 1
 		test()
-	}
 
-	log.Println(len(vault_map), len(peer_details_list))
-	if len(vault_map) == len(peer_details_list) {
-		keys := make([]string, 0)
-		for k := range vault_map {
+	} else {
 
-			keys = append(keys, k)
-		}
-		sort.Strings(keys)
+		log.Println(len(vault_map), len(peer_details_list))
+		if len(vault_map) == len(peer_details_list) {
+			keys := make([]string, 0)
+			for k := range vault_map {
 
-		for i, k := range keys {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
 
-			log.Println(k, "->key")
-			copy = append(copy, vault_map[k])
-			// peer_details_list[i] = vault_map[k]
-			log.Println(string(vault_map[k]), string(p2p.Host_ip))
-			if string(vault_map[k]) == string(p2p.Host_ip) {
-				my_index = i
+			for i, k := range keys {
+
+				log.Println(k, "->key")
+				copy = append(copy, vault_map[k])
+				// peer_details_list[i] = vault_map[k]
+				log.Println(string(vault_map[k]), string(p2p.Host_ip))
+				if string(vault_map[k]) == string(p2p.Host_ip) {
+					my_index = i
+
+				}
+				peer_index[vault_map[k]] = i
 
 			}
-			peer_index[vault_map[k]] = i
 
+			peer_details_list = copy
+			log.Println(peer_details_list, my_index)
 		}
-
-		peer_details_list = copy
-		log.Println(peer_details_list, my_index)
+		// test()
+		return nil
 	}
-	// test()
 	return nil
 }
 
@@ -274,7 +277,7 @@ func process_input(s network.Stream, h host.Host) error {
 		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/U.txt"
 		_f, _ := os.Create(path)
 		_f.WriteString(message_receive.Value)
-		fmt.Println("V Broadcasted By peer :", fmt.Sprint(res1))
+		fmt.Println("U Broadcasted By peer :", fmt.Sprint(res1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
 	}
