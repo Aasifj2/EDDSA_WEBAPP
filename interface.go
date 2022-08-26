@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/libp2p/go-libp2p-core/host"
+	"gopkg.in/dedis/kyber.v2"
 )
 
 //Discovered values
@@ -62,5 +63,7 @@ var execute_send = 0
 
 var n = 0
 var Threshold int
+
+var Group_key kyber.Point
 
 var port = ":8081"
