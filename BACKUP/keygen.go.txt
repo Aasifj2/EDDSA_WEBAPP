@@ -291,6 +291,8 @@ func keygen() {
 
 	var T int64 = int64(Threshold)
 	fmt.Println("THRESHOLD:", T)
+
+	var Group_key kyber.Point
 	//./zebpay -f first phase
 	//function
 	// 1. first phase - Setup
@@ -727,302 +729,304 @@ func keygen() {
 			encoding.WriteHexScalar(curve, file5, G)
 
 			//BROADCAST GROUP PUBLIC KEY
-			choice = 2
+			Group_key = Get_Group_key(int64(Peer_Count))
+			fmt.Println(Group_key.String())
+
 			//G-> input to sign t unknwn
 
 			//1 keygen
 			//2 singing
-			time.Sleep(time.Second * 2)
+			// time.Sleep(time.Second * 2)
 		case 2:
-			// status_struct.Phase = 8
+			status_struct.Phase = 8
 
-			// fmt.Println("******************************************PRESIGNING PHASE STARTED *******************************************")
-			// // var r_i kyber.Scalar
-			// var U_i kyber.Point
-			// U_i = curve.Point().Null()
-			// r_i := curve.Scalar().Pick(curve.RandomStream())
-			// U_i = U_i.Mul(r_i, g)
-			// //U_i, r_i := Setup_Keys(T, int64(Peer_Count), peer_number, g)
-			// os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
-			// file, _ := os.Create("Data/" + peer_number + "/Signing/r_i.txt")
-			// file2, _ := os.Create("Data/" + peer_number + "/Signing/U_i.txt")
+			fmt.Println("******************************************PRESIGNING PHASE STARTED *******************************************")
+			// var r_i kyber.Scalar
+			var U_i kyber.Point
+			U_i = curve.Point().Null()
+			r_i := curve.Scalar().Pick(curve.RandomStream())
+			U_i = U_i.Mul(r_i, g)
+			//U_i, r_i := Setup_Keys(T, int64(Peer_Count), peer_number, g)
+			os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
+			file, _ := os.Create("Data/" + peer_number + "/Signing/r_i.txt")
+			file2, _ := os.Create("Data/" + peer_number + "/Signing/U_i.txt")
 
-			// encoding.WriteHexScalar(curve, file, r_i)
-			// encoding.WriteHexPoint(curve, file2, U_i)
+			encoding.WriteHexScalar(curve, file, r_i)
+			encoding.WriteHexPoint(curve, file2, U_i)
 
-			// U_i_sending, _ := os.ReadFile("Data/" + peer_number + "/Signing/U_i.txt")
+			U_i_sending, _ := os.ReadFile("Data/" + peer_number + "/Signing/U_i.txt")
 
-			// send_data(peer_details_list, string(U_i_sending), "U_i", protocolID)
-			// wait_until(8)
+			send_data(peer_details_list, string(U_i_sending), "U_i", protocolID)
+			wait_until(8)
 
-			// //	Peer_Commitment(U_i, r_i, peer_number, Peer_Count)
+			//	Peer_Commitment(U_i, r_i, peer_number, Peer_Count)
 
-			// fmt.Println("Commiting Signing r_i")
-			// file, _ = os.Open("Data/" + peer_number + "/Signing/r_i.txt")
-			// file2, _ = os.Open("Data/" + peer_number + "/Signing/U_i.txt")
+			fmt.Println("Commiting Signing r_i")
+			file, _ = os.Open("Data/" + peer_number + "/Signing/r_i.txt")
+			file2, _ = os.Open("Data/" + peer_number + "/Signing/U_i.txt")
 
-			// r_i, err := encoding.ReadHexScalar(curve, file)
-			// U_i, err2 := encoding.ReadHexPoint(curve, file2)
+			r_i, err := encoding.ReadHexScalar(curve, file)
+			U_i, err2 := encoding.ReadHexPoint(curve, file2)
 
-			// if err != nil || err2 != nil {
-			// 	fmt.Println("error occured")
-			// }
+			if err != nil || err2 != nil {
+				fmt.Println("error occured")
+			}
 
-			// fmt.Println("r_i->", r_i.String(), "U_i->", U_i.String())
-			// // path := "Data/" + peer_number + "/SSK.txt"
-			// // f2, _ := os.Open(path)
-			// // f_2, _ := encoding.ReadHexScalar(curve, f2)
-			// // f2.Close()
-			// //commiting SSK
-			// Commitment_sign(r_i, U_i.String(), peer_number)
-			// //Broadcasting KGC
+			fmt.Println("r_i->", r_i.String(), "U_i->", U_i.String())
+			// path := "Data/" + peer_number + "/SSK.txt"
+			// f2, _ := os.Open(path)
+			// f_2, _ := encoding.ReadHexScalar(curve, f2)
+			// f2.Close()
+			//commiting SSK
+			Commitment_sign(r_i, U_i.String(), peer_number)
+			//Broadcasting KGC
 
-			// // Helper.Broadcast_KGC((peer_number))
+			// Helper.Broadcast_KGC((peer_number))
 
-			// fmt.Println("Broadcasting KGC values ....")
+			fmt.Println("Broadcasting KGC values ....")
 
-			// fmt.Println("")
-			// fmt.Println("Broadcasting Signature_S ....")
-			// f, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Signature_S" + ".txt")
-			// status_struct.Phase = 9
-			// send_data(peer_details_list, string(f), "Signature_S", protocolID)
-			// // wait_until(9)
+			fmt.Println("")
+			fmt.Println("Broadcasting Signature_S ....")
+			f, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Signature_S" + ".txt")
+			status_struct.Phase = 9
+			send_data(peer_details_list, string(f), "Signature_S", protocolID)
+			// wait_until(9)
 
-			// fmt.Println("Broadcasting PubKey ....")
-			// f1, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/PubKey" + ".txt")
-			// status_struct.Phase = 10
-			// fmt.Println("-->", string(f1))
+			fmt.Println("Broadcasting PubKey ....")
+			f1, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/PubKey" + ".txt")
+			status_struct.Phase = 10
+			fmt.Println("-->", string(f1))
 
-			// send_data(peer_details_list, string(f1), "PubKey", protocolID)
-			// // wait_until(10)
+			send_data(peer_details_list, string(f1), "PubKey", protocolID)
+			// wait_until(10)
 
-			// fmt.Println("Broadcasting Message ....")
-			// f3, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Message" + ".txt")
-			// status_struct.Phase = 11
-			// send_data(peer_details_list, string(f3), "Message", protocolID)
-			// // wait_until(11)
+			fmt.Println("Broadcasting Message ....")
+			f3, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Message" + ".txt")
+			status_struct.Phase = 11
+			send_data(peer_details_list, string(f3), "Message", protocolID)
+			// wait_until(11)
 
-			// fmt.Println("Broadcasting KGD values ....")
+			fmt.Println("Broadcasting KGD values ....")
 
-			// f4, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGD" + ".txt")
-			// status_struct.Phase = 12
-			// send_data(peer_details_list, string(f4), "KGD", protocolID)
-			// wait_until(12)
+			f4, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGD" + ".txt")
+			status_struct.Phase = 12
+			send_data(peer_details_list, string(f4), "KGD", protocolID)
+			wait_until(12)
 
-			// // case 11:
+			// case 11:
+			var i int64
+			//Recieving KGC from peers
+			for i = 0; i <= int64(Peer_Count); i++ {
+				if i == int64(my_index) {
+					continue
+				}
+				Recieve_KGC_sign(strconv.Itoa(int(i)))
+			}
+			//Recieving KGD from peers
+			for i = 0; i <= int64(Peer_Count); i++ {
+				if i == int64(my_index) {
+					continue
+				}
+				Recieve_KGD_sign(strconv.Itoa(int(i)))
+			}
+
+			//Decomiting Values
+			for i = 0; i <= int64(Peer_Count); i++ {
+				if i == int64(my_index) {
+					continue
+				}
+				y_j := Decommitment_j_sign(strconv.Itoa(int(i)))
+				if y_j == "Invalid" {
+					fmt.Printf("Peer %s commited Wrong Values Process Aborting \n", strconv.Itoa(int(i)))
+					//break
+				} else {
+					fmt.Printf("Peer %d Successfully Commited his values \n", i)
+					fmt.Printf("Recieved Value from decommitment module is %s \n", y_j)
+					fmt.Printf("\n")
+				}
+			}
+
+			// case 12:
+			//vss k=threshold
+			// f2, _ := os.Open("Received/Signing/" + peer_number + "/G.txt")
+			// x_i, _ := encoding.ReadHexScalar(curve, f2)
+			// f2.Close()
+			// x_i := curve.Scalar().Pick(curve.RandomStream())
+
+			//Set_secret_sign(x_i)
+
+			poly := []kyber.Scalar{}  // to store coefficients
+			share := []kyber.Scalar{} // to store share
+			alphas := []kyber.Point{} // to store alphas
+
+			// pt:=curve.Scalar()
+			// pt.SetBytes()
 			// var i int64
-			// //Recieving KGC from peers
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	if i == int64(my_index) {
+
+			for i = 0; i < T; i++ {
+				poly = append(poly, curve.Scalar().Zero())
+			}
+
+			for i = 0; i < T; i++ {
+				alphas = append(alphas, curve.Point().Null())
+			}
+
+			for i = 0; i <= int64(Peer_Count); i++ {
+				share = append(share, curve.Scalar().Zero())
+			}
+
+			// to generate coefficients of the polynomial         //r_i
+			Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "vss/Signing/"+peer_number)
+			// fmt.Println("COFFE", poly[0].String(), "\n", poly[1].String(), "\n")
+
+			Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/Signing/"+peer_number)
+			// fmt.Println("SHARES", share[0].String(), "\n", share[1].String(), "\n")
+
+			//Generating Alphas
+			Generate_Alphas(T, alphas, poly, peer_number, "vss/Signing/"+peer_number)
+			// fmt.Println("ALPHAS", alphas[0].String(), "\n", alphas[1].String(), "\n")
+
+			//Broadcasting alphas
+
+			status_struct.Phase = 13
+			for i = 0; i < T; i++ {
+				send_data(peer_details_list, alphas[i].String(), fmt.Sprint(i), protocolID)
+			}
+
+			wait_until(13)
+			Recieve_Alphas_sign(int64(Peer_Count), peer_number, T)
+
+			//Broadcasting Share
+			status_struct.Phase = 14
+			paths := "vss/Signing/" + peer_number
+			for i = 0; i <= int64(Peer_Count); i++ {
+				_f, _ := os.Open(paths + "/Indivisual_Share" + strconv.Itoa(int(i)) + ".txt")
+				shares, _ := encoding.ReadHexScalar(curve, _f)
+				tosend := shares.String()
+				fmt.Println("TO SeND:", tosend)
+				send_data(peer_details_list, tosend, fmt.Sprint(i), protocolID)
+			}
+			wait_until(14)
+
+			//Receiving Sign shares
+			Recieve_Share_sign(peer_number, int64(Peer_Count))
+			// var p int
+			// for p = 0; p <= Peer_Count; p++ {
+			// 	if strconv.Itoa(p) == peer_number {
 			// 		continue
 			// 	}
-			// 	Recieve_KGC_sign(strconv.Itoa(int(i)))
-			// }
-			// //Recieving KGD from peers
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	if i == int64(my_index) {
-			// 		continue
+			// 	alphas2 := []kyber.Point{} // to store alphas
+			// 	for i = 0; i < T; i++ {
+			// 		alphas2 = append(alphas2, curve.Point().Null())
 			// 	}
-			// 	Recieve_KGD_sign(strconv.Itoa(int(i)))
-			// }
 
-			// //Decomiting Values
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	if i == int64(my_index) {
-			// 		continue
-			// 	}
-			// 	y_j := Decommitment_j_sign(strconv.Itoa(int(i)))
-			// 	if y_j == "Invalid" {
-			// 		fmt.Printf("Peer %s commited Wrong Values Process Aborting \n", strconv.Itoa(int(i)))
-			// 		//break
-			// 	} else {
-			// 		fmt.Printf("Peer %d Successfully Commited his values \n", i)
-			// 		fmt.Printf("Recieved Value from decommitment module is %s \n", y_j)
-			// 		fmt.Printf("\n")
-			// 	}
-			// }
-
-			// // case 12:
-			// //vss k=threshold
-			// // f2, _ := os.Open("Received/Signing/" + peer_number + "/G.txt")
-			// // x_i, _ := encoding.ReadHexScalar(curve, f2)
-			// // f2.Close()
-			// // x_i := curve.Scalar().Pick(curve.RandomStream())
-
-			// //Set_secret_sign(x_i)
-
-			// poly := []kyber.Scalar{}  // to store coefficients
-			// share := []kyber.Scalar{} // to store share
-			// alphas := []kyber.Point{} // to store alphas
-
-			// // pt:=curve.Scalar()
-			// // pt.SetBytes()
-			// // var i int64
-
-			// for i = 0; i < T; i++ {
-			// 	poly = append(poly, curve.Scalar().Zero())
-			// }
-
-			// for i = 0; i < T; i++ {
-			// 	alphas = append(alphas, curve.Point().Null())
-			// }
-
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	share = append(share, curve.Scalar().Zero())
-			// }
-
-			// // to generate coefficients of the polynomial         //r_i
-			// Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "vss/Signing/"+peer_number)
-			// // fmt.Println("COFFE", poly[0].String(), "\n", poly[1].String(), "\n")
-
-			// Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/Signing/"+peer_number)
-			// // fmt.Println("SHARES", share[0].String(), "\n", share[1].String(), "\n")
-
-			// //Generating Alphas
-			// Generate_Alphas(T, alphas, poly, peer_number, "vss/Signing/"+peer_number)
-			// // fmt.Println("ALPHAS", alphas[0].String(), "\n", alphas[1].String(), "\n")
-
-			// //Broadcasting alphas
-
-			// status_struct.Phase = 13
-			// for i = 0; i < T; i++ {
-			// 	send_data(peer_details_list, alphas[i].String(), fmt.Sprint(i), protocolID)
-			// }
-
-			// wait_until(13)
-			// Recieve_Alphas_sign(int64(Peer_Count), peer_number, T)
-
-			// //Broadcasting Share
-			// status_struct.Phase = 14
-			// paths := "vss/Signing/" + peer_number
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	_f, _ := os.Open(paths + "/Indivisual_Share" + strconv.Itoa(int(i)) + ".txt")
-			// 	shares, _ := encoding.ReadHexScalar(curve, _f)
-			// 	tosend := shares.String()
-			// 	fmt.Println("TO SeND:", tosend)
-			// 	send_data(peer_details_list, tosend, fmt.Sprint(i), protocolID)
-			// }
-			// wait_until(14)
-
-			// //Receiving Sign shares
-			// Recieve_Share_sign(peer_number, int64(Peer_Count))
-			// // var p int
-			// // for p = 0; p <= Peer_Count; p++ {
-			// // 	if strconv.Itoa(p) == peer_number {
-			// // 		continue
-			// // 	}
-			// // 	alphas2 := []kyber.Point{} // to store alphas
-			// // 	for i = 0; i < T; i++ {
-			// // 		alphas2 = append(alphas2, curve.Point().Null())
-			// // 	}
-
-			// // 	var q int
-			// // 	for q = 0; q < int(T); q++ {
-			// // 		fx, err := os.Open("vss/Signing/" + strconv.Itoa(int(p)) + "/alpha" + strconv.Itoa(int(q)) + ".txt")
-			// // 		if err != nil {
-			// // 			panic(err)
-			// // 		}
-			// // 		fx_p, _ := encoding.ReadHexPoint(curve, fx)
-			// // 		alphas2[q] = fx_p
-			// // 	}
-			// // 	fx2, errx := os.Open("vss/Signing/" + strconv.Itoa(int(p)) + "/Indivisual_Share" + peer_number + ".txt")
-			// // 	if errx != nil {
-			// // 		fmt.Print("ERROR ERRX")
-			// // 	}
-			// // 	my_share, _ := encoding.ReadHexScalar(curve, fx2)
-			// // 	check(peer_number, my_share, T, alphas2)
-
-			// // }
-
-			// // case 13:
-			// fmt.Println("Verifying Signing Shares")
-
-			// path := "Received/Signing/" + peer_number + "/R_i.txt"
-			// R_i := Verify_Share(peer_number, int64(Peer_Count), T, true)
-			// file3, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
-			// if err != nil {
-			// 	panic(err)
-			// }
-			// encoding.WriteHexScalar(curve, file3, R_i)
-			// file3.Close()
-
-			// // case 14:
-			// var U kyber.Point
-			// U = curve.Point().Null()
-			// fmt.Println("U_i's : ")
-			// // var i int
-			// for i = 0; i <= int64(Peer_Count); i++ {
-			// 	if i == int64(my_index) {
-			// 		path := "Data/" + fmt.Sprint(i) + "/Signing/U_i.txt"
-			// 		file, err := os.Open(path)
+			// 	var q int
+			// 	for q = 0; q < int(T); q++ {
+			// 		fx, err := os.Open("vss/Signing/" + strconv.Itoa(int(p)) + "/alpha" + strconv.Itoa(int(q)) + ".txt")
 			// 		if err != nil {
 			// 			panic(err)
 			// 		}
-			// 		U_i, e1 := encoding.ReadHexPoint(curve, file)
-			// 		if e1 != nil {
-			// 			panic(e1)
-			// 		}
-			// 		fmt.Println(U_i)
-			// 		if U.Equal(curve.Point().Null()) {
-			// 			U = U_i
-			// 		} else {
-			// 			U.Add(U, U_i)
-			// 		}
-			// 	} else {
-			// 		peer := strconv.Itoa(int(i))
-			// 		U_i := Read_Ui(peer)
-			// 		fmt.Println(U_i)
-
-			// 		if U.Equal(curve.Point().Null()) {
-			// 			U = U_i
-			// 		} else {
-			// 			U.Add(U, U_i)
-			// 		}
+			// 		fx_p, _ := encoding.ReadHexPoint(curve, fx)
+			// 		alphas2[q] = fx_p
 			// 	}
+			// 	fx2, errx := os.Open("vss/Signing/" + strconv.Itoa(int(p)) + "/Indivisual_Share" + peer_number + ".txt")
+			// 	if errx != nil {
+			// 		fmt.Print("ERROR ERRX")
+			// 	}
+			// 	my_share, _ := encoding.ReadHexScalar(curve, fx2)
+			// 	check(peer_number, my_share, T, alphas2)
+
 			// }
-			// // //U,U_i,R_i is generated for each peer above
-			// fmt.Println("U:")
-			// fmt.Println(U)
 
-			// os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
-			// file, _ = os.Create("Data/" + peer_number + "/Signing/U.txt")
-			// encoding.WriteHexPoint(curve, file, U)
-			// choice = 3
-			// time.Sleep(time.Second * 2)
+			// case 13:
+			fmt.Println("Verifying Signing Shares")
+
+			path := "Received/Signing/" + peer_number + "/R_i.txt"
+			R_i := Verify_Share(peer_number, int64(Peer_Count), T, true)
+			file3, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+			if err != nil {
+				panic(err)
+			}
+			encoding.WriteHexScalar(curve, file3, R_i)
+			file3.Close()
+
+			// case 14:
+			var U kyber.Point
+			U = curve.Point().Null()
+			fmt.Println("U_i's : ")
+			// var i int
+			for i = 0; i <= int64(Peer_Count); i++ {
+				if i == int64(my_index) {
+					path := "Data/" + fmt.Sprint(i) + "/Signing/U_i.txt"
+					file, err := os.Open(path)
+					if err != nil {
+						panic(err)
+					}
+					U_i, e1 := encoding.ReadHexPoint(curve, file)
+					if e1 != nil {
+						panic(e1)
+					}
+					fmt.Println(U_i)
+					if U.Equal(curve.Point().Null()) {
+						U = U_i
+					} else {
+						U.Add(U, U_i)
+					}
+				} else {
+					peer := strconv.Itoa(int(i))
+					U_i := Read_Ui(peer)
+					fmt.Println(U_i)
+
+					if U.Equal(curve.Point().Null()) {
+						U = U_i
+					} else {
+						U.Add(U, U_i)
+					}
+				}
+			}
+			// //U,U_i,R_i is generated for each peer above
+			fmt.Println("U:")
+			fmt.Println(U)
+
+			os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
+			file, _ = os.Create("Data/" + peer_number + "/Signing/U.txt")
+			encoding.WriteHexPoint(curve, file, U)
+			choice = 3
+			time.Sleep(time.Second * 2)
 		case 3:
-			// fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
+			fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
 
-			// file, _ := os.Open("Data/" + peer_number + "/Signing/r_i.txt")
-			// R_i, _ := encoding.ReadHexScalar(curve, file)
+			file, _ := os.Open("Data/" + peer_number + "/Signing/r_i.txt")
+			R_i, _ := encoding.ReadHexScalar(curve, file)
 
-			// file, _ = os.Open("Received/Signing/" + peer_number + "/G.txt")
-			// x_i, _ := encoding.ReadHexScalar(curve, file)
+			file, _ = os.Open("Received/Signing/" + peer_number + "/G.txt")
+			x_i, _ := encoding.ReadHexScalar(curve, file)
 
-			// file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
-			// U, _ := encoding.ReadHexPoint(curve, file)
+			file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
+			U, _ := encoding.ReadHexPoint(curve, file)
 
-			// Message := "Hello Aasif Sign"
-			// V_i := Signing_T_Unkown(U, x_i, R_i, Message)
+			Message := "Hello Aasif Sign"
+			V_i := Signing_T_Unkown(U, x_i, R_i, Message)
 
-			// file, _ = os.Create("Data/" + peer_number + "/Signing/V_i.txt")
-			// encoding.WriteHexScalar(curve, file, V_i)
+			file, _ = os.Create("Data/" + peer_number + "/Signing/V_i.txt")
+			encoding.WriteHexScalar(curve, file, V_i)
 
-			// //Broadcasting V_i
-			// status_struct.Phase = 15
+			//Broadcasting V_i
+			status_struct.Phase = 15
 
-			// tosend, _ := encoding.ScalarToStringHex(curve, V_i)
-			// send_data(peer_details_list, tosend, "V_i", protocolID)
+			tosend, _ := encoding.ScalarToStringHex(curve, V_i)
+			send_data(peer_details_list, tosend, "V_i", protocolID)
 
-			// wait_until(15)
+			wait_until(15)
 
-			// status_struct.Phase = 16
+			status_struct.Phase = 16
 
-			// tosend, _ = encoding.PointToStringHex(curve, U)
-			// send_data(peer_details_list, tosend, "U", protocolID)
+			tosend, _ = encoding.PointToStringHex(curve, U)
+			send_data(peer_details_list, tosend, "U", protocolID)
 
-			// wait_until(16)
-			// choice = 4
-			// time.Sleep(time.Second * 2)
+			wait_until(16)
+			choice = 4
+			time.Sleep(time.Second * 2)
 		case 4:
 			fmt.Println("************ COMBINATION PHASE ****************")
 			T_arr := [...]int{1}

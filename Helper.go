@@ -587,3 +587,16 @@ func Get_EPK(path string) (curves.Point, error) {
 	return _EPK, nil
 
 }
+
+func Get_Group_Key(Peer_Count int64) kyber.Point {
+	var i int64
+	var GK kyber.Point
+	GK = curve.Point().Null()
+	for i = 0; i <= Peer_Count; i++ {
+		path := "Broadcast/" + fmt.Sprint(i) + "/Alphas/alpha0.txt"
+		file, _ := os.Open(path)
+		temp, _ := encoding.ReadHexPoint(curve, file)
+		GK = GK.Add(GK, temp)
+	}
+	return GK
+}
