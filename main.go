@@ -103,6 +103,8 @@ func main() {
 		// r.HandleFunc("/css2", CSS2)
 		r.HandleFunc("/dealer", DisplayForm)
 		r.HandleFunc("/keygen", DisplayData)
+		r.HandleFunc("/signing", Sign_Message)
+		r.HandleFunc("/nondealer", DisplayNonDealer)
 		http.ListenAndServe(port, r)
 
 	}
