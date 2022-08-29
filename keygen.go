@@ -269,6 +269,26 @@ func check(peer_number string, f_i kyber.Scalar, T int64, alphas []kyber.Point) 
 	return v1.Equal(sum)
 }
 
+func verify_GK(Peer_Count int64, T int64) bool {
+	GK := Get_Group_Key(Peer_Count)
+	sum := curve.Scalar().Zero()
+	var i int64
+	for i = 0; i <= Peer_Count; i++ {
+		path := "Received/" + strconv.Itoa(int(i)) + "/G.txt"
+		file, _ := os.Open(path)
+		temp, _ := encoding.ReadHexScalar(curve, file)
+		lambda := Lambda(T, i)
+		prod := curve.Scalar().Mul(lambda, temp)
+		sum = sum.Add(sum, prod)
+	}
+	final := curve.Point().Mul(sum, g)
+	if GK.Equal(final) {
+		return true
+	} else {
+		return false
+	}
+}
+
 //Rework to common message sending function
 func keygen() {
 	// if keygenFlag {
@@ -731,6 +751,11 @@ func keygen() {
 	file5, _ := os.Create(path5 + "/G.txt")
 	encoding.WriteHexScalar(curve, file5, G)
 
+	if verify_GK(int64(Peer_Count), T) {
+		fmt.Println("VERIFIED G")
+	} else {
+		fmt.Println("NOT VERIFIED G")
+	}
 	//BROADCAST GROUP PUBLIC KEY
 
 	//G-> input to sign t unknwn

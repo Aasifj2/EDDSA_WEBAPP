@@ -6,23 +6,43 @@
                         function update_hidden(){
                                 document.getElementById("id2").value=document.getElementById("id1").value
                         }
+                        function change_bg(){
+                                // console.log( document.getElementById("particles-js").style.backgroundColor.value)
+                                document.getElementById("particles-js").style.backgroundColor="#9c090e";
+                                document.getElementById("loading").style.display="flex";
+                        }
                 </script>
         </head>
 
         <body>
                 <div id="particles-js">
+                  
                         <div class="text">
-                                <img src="../assets/image/logo.png" width=50px/>
+                                <div class="spinner-box" id="loading" style="display:none">
+                                      
+                                        <div class="leo-border-1">
+                                          <div class="leo-core-1"></div>
+                                        </div> 
+                                        <div class="leo-border-2">
+                                          <div class="leo-core-2"></div>
+                                        </div> 
+                                        
+                                </div>
+                                      
+
+
+                                <!-- <img src="../assets/image/logo.png" width=50px/> -->
                                 <h1>Welcome to Insaanity THS</h1><br>
                                 <h3>Please Enter Your Vault ID:</h3>
+                        
+                                <form method="POST" action="/dealer" >
 
-                                <form method="POST" action="/dealer">
                                         <input type="text" onChange="update_hidden()" id="id1" name="vaultID"><br><br>
-                                        <button><input type="submit" value="Dealer"></button>
+                                        <button><input type="submit" value="Dealer" onclick="change_bg()"></button>
                                 </form>
                                 <form method="POST" action="/nondealer">
                                         <input type="hidden" id="id2" name="vaultID2"><br><br>
-                                        <button><input type="submit" value="Non-Dealer"></button>
+                                        <button><input type="submit" value="Non-Dealer" onclick="change_bg()"></button>
                                 </form>
 
                         <br>
