@@ -866,7 +866,7 @@ func Signing(peer_number, Message string) {
 	fmt.Println("MESSAGE TO SIGN:", Message)
 	var protocolID protocol.ID = "/keygen/0.0.1"
 	Peer_Count := len(peer_details_list)
-
+	T := Threshold
 	// r_i:= curve.Scalar().Pick(curve.RandomStream())
 
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
@@ -931,7 +931,7 @@ func Signing(peer_number, Message string) {
 	tosend, _ := encoding.ScalarToStringHex(curve, V_i)
 	send_data(peer_details_list, tosend, "V_i", protocolID)
 
-	wait_until(15)
+	Wait_until_for_sign(15, T)
 
 	// status_struct.Phase = 16
 

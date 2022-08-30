@@ -1214,7 +1214,7 @@ func wait_until(phase int) {
 
 	}
 }
-func wait_until_for_sign(phase int, t int) {
+func Wait_until_for_sign(phase int, t int) {
 	for {
 		flag := 0
 		for i, item := range peer_details_list {
@@ -1234,7 +1234,7 @@ func wait_until_for_sign(phase int, t int) {
 			}
 
 		}
-		if flag > len(peer_details_list)-t {
+		if flag != len(peer_details_list)-t {
 
 			time.Sleep(time.Microsecond * 5)
 			// log.Println(flag, phase, receive_peer_phase, sent_peer_phase)
