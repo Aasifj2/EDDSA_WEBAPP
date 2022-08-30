@@ -224,7 +224,7 @@ func Verify_i(i int64, f_i kyber.Scalar, T int64, alphas []kyber.Point) bool {
 	var sum kyber.Point
 	sum = curve.Point().Null()
 	for j = 0; j < T; j++ {
-		X := math.Pow(float64(i+1), float64(j))
+		X := math.Pow(float64(i), float64(j))
 		x := curve.Scalar().SetInt64(int64(X))
 		var v4 kyber.Point = curve.Point().Null()
 		// v4 = Readalpha(j)

@@ -271,6 +271,7 @@ func check(peer_number string, f_i kyber.Scalar, T int64, alphas []kyber.Point) 
 
 func verify_GK(Peer_Count int64, T int64) bool {
 	GK := Get_Group_Key(Peer_Count)
+	fmt.Println("GROUP KEY IN VERIFY GK:", GK.String(), "\n\n")
 	sum := curve.Scalar().Zero()
 	var i int64
 	for i = 1; i <= Peer_Count; i++ {
@@ -512,30 +513,31 @@ func keygen() {
 	//Generating Alphas
 	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
 	//
-	Path := "vss/" + peer_number
-	for i = 0; i < T; i++ {
-		path1 := Path + "/Initial_coeff" + strconv.Itoa(int(i)) + ".txt"
-		file, e2 := os.Create(path1)
-		if e2 != nil {
-			panic(e2)
-		}
-		encoding.WriteHexScalar(curve, file, poly[i])
-		file.Close()
-		//Intializing Curr coeff
-		path1 = Path + "/Curr_coeff" + strconv.Itoa(int(i)) + ".txt"
-		file, e2 = os.Create(path1)
-		if e2 != nil {
-			panic(e2)
-		}
-		encoding.WriteHexScalar(curve, file, poly[i])
-		file.Close()
-	}
-	path1 := Path + "/Curr_Share"
-	for i = 1; i <= int64(Peer_Count); i++ {
-		file, _ := os.Create(path1 + strconv.Itoa(int(i)) + ".txt")
-		encoding.WriteHexScalar(curve, file, share[i-1]) //writing share to the file
-		file.Close()
-	}
+	//below commented is for KEY REFRESH
+	// Path := "vss/" + peer_number
+	// for i = 0; i < T; i++ {
+	// 	path1 := Path + "/Initial_coeff" + strconv.Itoa(int(i)) + ".txt"
+	// 	file, e2 := os.Create(path1)
+	// 	if e2 != nil {
+	// 		panic(e2)
+	// 	}
+	// 	encoding.WriteHexScalar(curve, file, poly[i])
+	// 	file.Close()
+	// 	//Intializing Curr coeff
+	// 	path1 = Path + "/Curr_coeff" + strconv.Itoa(int(i)) + ".txt"
+	// 	file, e2 = os.Create(path1)
+	// 	if e2 != nil {
+	// 		panic(e2)
+	// 	}
+	// 	encoding.WriteHexScalar(curve, file, poly[i])
+	// 	file.Close()
+	// }
+	// path1 := Path + "/Curr_Share"
+	// for i = 1; i <= int64(Peer_Count); i++ {
+	// 	file, _ := os.Create(path1 + strconv.Itoa(int(i)) + ".txt")
+	// 	encoding.WriteHexScalar(curve, file, share[i-1]) //writing share to the file
+	// 	file.Close()
+	// }
 	//Broadcasting alphas
 	status_struct.Phase = 6
 	for i = 0; i < T; i++ {
@@ -745,7 +747,7 @@ func keygen() {
 	fmt.Println(peer_number, "Verifying Shares")
 
 	G := Verify_Share(peer_number, int64(Peer_Count), int64(T), false)
-	fmt.Println(G.String())
+	fmt.Println("Private Key Share:", G.String(), "\n")
 	path5 := "Received/" + peer_number
 	os.MkdirAll(path5, os.ModePerm)
 	file5, _ := os.Create(path5 + "/G.txt")

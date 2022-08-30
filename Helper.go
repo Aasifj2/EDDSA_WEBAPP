@@ -348,7 +348,7 @@ func Recieve_Alphas(Peer_Count int64, peer_number string, k int64) {
 	var i int64
 	var j int64
 	for j = 1; j <= Peer_Count; j++ {
-		if j == int64(my_index) {
+		if j == int64(my_index+1) {
 			continue
 		}
 		path1 := "Received/" + peer_number + "/Alphas/" + fmt.Sprint(j)
