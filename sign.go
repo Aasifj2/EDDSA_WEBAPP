@@ -174,9 +174,19 @@ func combine_T_Unknown(T_arr []int, peer_number, Message string) (kyber.Scalar, 
 	// 	panic(err)
 	// }
 	var Usum kyber.Point = curve.Point().Null()
-
+	var path string
+	var path2 string
 	for i := 1; i <= Peer_Count; i++ {
-		path := "Broadcast/" + fmt.Sprint(i) + "/Signing/V_i.txt"
+		if i == (my_index + 1) {
+			path = "Data/" + strconv.Itoa(i) + "/Signing/V_i.txt"
+			path2 = "Data/" + fmt.Sprint(i) + "/Signing/U_i.txt"
+
+		} else {
+			path = "Broadcast/" + fmt.Sprint(i) + "/Signing/V_i.txt"
+			path2 = "Broadcast/" + fmt.Sprint(i) + "/Signing/U_i.txt"
+
+		}
+		// path := "Broadcast/" + fmt.Sprint(i) + "/Signing/V_i.txt"
 		file, err := os.Open(path)
 		if err != nil {
 			continue
@@ -194,7 +204,7 @@ func combine_T_Unknown(T_arr []int, peer_number, Message string) (kyber.Scalar, 
 		// Usum = Usum.Add(Usum, prod2)
 		// path2 := "Data/" + strconv.Itoa(int(i)) + "/Signing/U_i.txt"
 		// file2, _ := os.Open(path2)
-		path2 := "Broadcast/" + fmt.Sprint(i) + "/Signing/U_i.txt"
+		// path2 := "Broadcast/" + fmt.Sprint(i) + "/Signing/U_i.txt"
 		file2, err := os.Open(path2)
 		if err != nil {
 			continue
