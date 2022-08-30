@@ -66,6 +66,14 @@ var Threshold int
 
 var Group_key kyber.Point
 
-var port = ":8082"
+var port = ":8081"
 
 var keygenFlag = false
+
+type Verify_sign struct {
+	Verify_bool bool
+	Sign        string
+	Gkey        string
+}
+
+var verified_value Verify_sign

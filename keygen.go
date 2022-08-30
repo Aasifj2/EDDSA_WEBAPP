@@ -1202,7 +1202,7 @@ func wait_until(phase int) {
 		}
 		if flag == 1 {
 
-			time.Sleep(time.Microsecond * 5)
+			time.Sleep(time.Millisecond * 10)
 			// log.Println(flag, phase, receive_peer_phase, sent_peer_phase)
 			flag = 0
 			continue

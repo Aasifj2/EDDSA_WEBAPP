@@ -103,13 +103,20 @@ func Sign_Message(w http.ResponseWriter, r *http.Request) {
 	Message := r.FormValue("message")
 	peer_number := fmt.Sprint(my_index + 1)
 	Signing(peer_number, Message)
+	tmpl.ExecuteTemplate(w, "nondealer.html", struct {
+		P2p_send       P2P
+		verified_value Verify_sign
+	}{p2p, verified_value})
 
 }
 
 func DisplayNonDealer(w http.ResponseWriter, r *http.Request) {
 	this_vault = r.FormValue("vaultID2")
 	fmt.Println("VALULT ND:", this_vault)
-	tmpl.ExecuteTemplate(w, "nondealer.html", nil)
+
+	tmpl.ExecuteTemplate(w, "nondealer.html", struct {
+		P2p_send P2P
+	}{p2p})
 }
 
 // }

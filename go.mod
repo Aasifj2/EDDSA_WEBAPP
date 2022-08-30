@@ -1,11 +1,11 @@
 module example.com/m/v2
 
-go 1.18
+go 1.17
 
 require (
 	github.com/coinbase/kryptology v1.8.0
-	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.8.1
+	github.com/gorilla/mux v1.8.0
 	github.com/libp2p/go-libp2p v0.20.2
 	github.com/libp2p/go-libp2p-core v0.17.0
 	github.com/multiformats/go-multiaddr v0.6.0
@@ -124,6 +124,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	lukechampine.com/blake3 v1.1.6 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 
 )

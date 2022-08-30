@@ -962,4 +962,9 @@ func Signing(peer_number, Message string) {
 		fmt.Println("INSIDE FAILED TO VERIFIY")
 	}
 
+	verified_value = Verify_sign{
+		Verify_bool: res,
+		Sign:        Vsum.String(),
+		Gkey:        GKey.String(),
+	}
 }
