@@ -8,8 +8,9 @@
                 <div id="particles-js">
                 
                         <div class="text">
-                                
-                                <h1>Cick The Create Signature Button To Initiate the <br>Signing Process</h1>
+                        
+                               
+                                <h1>Cick The Pre-Signing Button To Initiate the <br>Signing Process</h1>
                                 
                                 <br>
                         
@@ -21,14 +22,16 @@
                                         <input style="padding:10px" type="submit" value="Create-Signature">
                                 </form><br>
                                 
+                                <h2>Sign: <b>{{.verified_value1.Sign}}</b><br></h2>
+                                <h2>Group Key: <b>{{.verified_value1.Gkey}}</b><br></h2>
+                                <h2>Sign Verified: <b>{{.verified_value1.Verify_bool}}</b><br></h2>
                                 <!-- <form method="POST" action="/signing">
                                         <input type="submit" value="Signing" >
                                 </form><br>
                                 <form method="POST" action="/combine">
                                         <input type="submit" value="Combine">
                                 </form> -->
-                              
-                               
+
                         </div>
                 </div>
                 <script src="../assets/js/particles.js"></script>
