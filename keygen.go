@@ -753,11 +753,11 @@ func keygen() {
 	file5, _ := os.Create(path5 + "/G.txt")
 	encoding.WriteHexScalar(curve, file5, G)
 
-	if verify_GK(int64(Peer_Count), T) {
-		fmt.Println("VERIFIED G")
-	} else {
-		fmt.Println("NOT VERIFIED G")
-	}
+	// if verify_GK(int64(Peer_Count), T) {
+	// 	fmt.Println("VERIFIED G")
+	// } else {
+	// 	fmt.Println("NOT VERIFIED G")
+	// }
 	//BROADCAST GROUP PUBLIC KEY
 
 	//G-> input to sign t unknwn

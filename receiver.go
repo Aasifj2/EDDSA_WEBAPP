@@ -264,7 +264,7 @@ func process_input(s network.Stream, h host.Host) error {
 
 		fmt.Println("Sign Shares Recieved from peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
-	} else if message_receive.Phase == 15 {
+	} else if message_receive.Phase == 16 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/V_i.txt"
 		_f, _ := os.Create(path)
@@ -272,7 +272,7 @@ func process_input(s network.Stream, h host.Host) error {
 		fmt.Println("V Broadcasted By peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
-	} else if message_receive.Phase == 16 {
+	} else if message_receive.Phase == 17 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/U.txt"
 		_f, _ := os.Create(path)
@@ -280,6 +280,14 @@ func process_input(s network.Stream, h host.Host) error {
 		fmt.Println("U Broadcasted By peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
+	} else if message_receive.Phase == 15 {
+		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/"
+		os.MkdirAll(path, 0755)
+		_f, _ := os.Create(path + message_receive.Name + ".txt")
+		_f.WriteString(message_receive.Value)
+
+		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 	}
 
 	_, err = s.Write([]byte(""))
