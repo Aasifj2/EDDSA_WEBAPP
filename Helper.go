@@ -593,6 +593,14 @@ func Get_Group_Key(Peer_Count int64) kyber.Point {
 	var GK kyber.Point
 	GK = curve.Point().Null()
 	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
+			path2 := "vss/" + fmt.Sprint(i) + "/alpha0.txt"
+
+			file, _ := os.Open(path2)
+			temp, _ := encoding.ReadHexPoint(curve, file)
+			GK = GK.Add(GK, temp)
+			continue
+		}
 		path := "Broadcast/" + fmt.Sprint(i) + "/Alphas/alpha0.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexPoint(curve, file)
