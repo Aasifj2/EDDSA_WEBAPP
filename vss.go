@@ -478,7 +478,7 @@ func Recieve_Share_sign(peer_number string, Peer_Count int64) {
 	}
 }
 
-func verify_final_sign(V kyber.Scalar, U kyber.Point, message string, GK kyber.Point) bool {
+func Verify_final_sign(V kyber.Scalar, U kyber.Point, message string, GK kyber.Point) bool {
 	//message, U , V public key
 	//V is sum of all V_i's
 	//U is sum of all U_i's
@@ -495,6 +495,35 @@ func verify_final_sign(V kyber.Scalar, U kyber.Point, message string, GK kyber.P
 
 	t2 := curve.Point().Mul(H1, GK)
 	t2 = t2.Add(t2, U)
+
+	fmt.Println(t1)
+	fmt.Println(t2)
+
+	if t1.Equal(t2) {
+		return true
+	} else {
+		return false
+	}
+
+}
+
+func Verify_sign_share(V_i kyber.Scalar, U kyber.Point, U_i kyber.Point, message string, X_i kyber.Point) bool {
+	//message, U , V public key
+	//V is sum of all V_i's
+	//U is sum of all U_i's
+	//GK is sum of all alpha[0] (group key)
+
+	t1 := curve.Point().Mul(V_i, g)
+	// h := Hash(message + U.String())
+	Hashing_message := message + U.String()
+	h, _ := hash_sign([]byte(Hashing_message))
+
+	var H1 kyber.Scalar
+	H1 = curve.Scalar().Zero()
+	H1.SetBytes(h)
+
+	t2 := curve.Point().Mul(H1, X_i)
+	t2 = t2.Add(t2, U_i)
 
 	fmt.Println(t1)
 	fmt.Println(t2)

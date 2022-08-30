@@ -125,8 +125,8 @@ func Broadcast_Ui(peer_number int64, U_i kyber.Point) {
 	f1.Close()
 }
 
-func combine_T_Unknown(T_arr []int, peer_number string) {
-	Peer_Count := len(peer_details_list) - 1
+func combine_T_Unknown(T_arr []int, peer_number, Message string) (kyber.Scalar, kyber.Point) {
+	Peer_Count := len(peer_details_list)
 	T := Threshold
 	var Vsum kyber.Scalar = curve.Scalar().Zero()
 	// err := os.MkdirAll("Received/Signing/Combine", os.ModePerm)
@@ -142,6 +142,7 @@ func combine_T_Unknown(T_arr []int, peer_number string) {
 			continue
 		}
 		Lambda_i := Lambda(int64(T), int64(i))
+		Lambda_i2 := Lambda_i
 		V_i, _ := encoding.ReadHexScalar(curve, file)
 
 		prod := curve.Scalar().Mul(Lambda_i, V_i)
@@ -152,16 +153,28 @@ func combine_T_Unknown(T_arr []int, peer_number string) {
 		if err != nil {
 			continue
 		}
+		// Lambda_i2 := Lambda(int64(T), int64(i))
 		U_i, _ := encoding.ReadHexPoint(curve, file)
-		prod2 := curve.Point().Mul(Lambda_i, U_i)
+		prod2 := curve.Point().Mul(Lambda_i2, U_i)
 		Usum = Usum.Add(Usum, prod2)
 	}
 	fmt.Println("Sum of all V_i:", Vsum.String())
-	fmt.Println("Sum of All U_i:", Usum.String())
+	fmt.Println("Sum of All labda U_i:", Usum.String())
 	file, _ := os.OpenFile("Received/Signing/"+peer_number+"/V.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	encoding.WriteHexScalar(curve, file, Vsum)
 	file, _ = os.OpenFile("Received/Signing/"+peer_number+"/U.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	encoding.WriteHexPoint(curve, file, Usum)
+
+	GK := Get_Group_Key(int64(Peer_Count))
+
+	res := Verify_sign_share(Vsum, Usum, Usum, Message, GK)
+	if res {
+		fmt.Println("INSIDe SUCCESS VERIFICATION OF SIGNATURE")
+	} else {
+		fmt.Println("INSIDE FAILED TO VERIFIY")
+	}
+
+	return Vsum, Usum
 
 }
 
@@ -402,8 +415,8 @@ func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_numb
 	R_i, _ := encoding.ReadHexScalar(curve, file)
 	U_i := curve.Point().Mul(R_i, g)
 
-	var T int64 = int64(Threshold)
-	j, _ := strconv.Atoi(peer_number)
+	// var T int64 = int64(Threshold)
+	// j, _ := strconv.Atoi(peer_number)
 
 	Hashing_message := Message + U.String()
 	H, _ := hash_sign([]byte(Hashing_message))
@@ -411,7 +424,7 @@ func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_numb
 	H1 = curve.Scalar().Zero()
 	H1.SetBytes(H)
 	H1 = H1.Mul(H1, x_i) //H1=H*x_i
-	H1 = H1.Mul(H1, Lambda(T, int64(j)))
+	// H1 = H1.Mul(H1, Lambda(T, int64(j)))
 	V_i := R_i.Add(R_i, H1) //Val= R_i+ H1
 
 	return V_i, U_i
@@ -810,7 +823,7 @@ func Signing(peer_number, Message string) {
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
 
 	file, _ := os.Open("Received/Signing/" + peer_number + "/R_i.txt")
-	R_i, _ := encoding.ReadHexScalar(curve, file)
+	// R_i, _ := encoding.ReadHexScalar(curve, file)
 	// U_i := curve.Point().Mul(R_i, g)
 
 	file, _ = os.Open("Received/" + peer_number + "/G.txt")
@@ -818,30 +831,27 @@ func Signing(peer_number, Message string) {
 
 	file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
 	U, _ := encoding.ReadHexPoint(curve, file)
+	fmt.Println("U from PreSign:", U.String())
 
-	file, _ = os.Open("Data/" + peer_number + "/Signing/U_i.txt")
-	U_i, _ := encoding.ReadHexPoint(curve, file)
+	// file, _ = os.Open("Data/" + peer_number + "/Signing/U_i.txt")
+	// U_i, _ := encoding.ReadHexPoint(curve, file)
 
-	fmt.Println("U_i READ:", U_i.String(), "\n")
+	// fmt.Println("U_i READ:", U_i.String(), "\n")
 	// file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
 	// U, _ := encoding.ReadHexPoint(curve, file)
-
 	V_i, U_i := Signing_T_Unkown(U, x_i, Message, peer_number)
 	fmt.Println("U_i returned from sign:", U_i.String(), "\n")
 
-	X := curve.Point().Mul(x_i, g)
+	X_i := curve.Point().Mul(x_i, g)
+	fmt.Println("X_i", X_i.String())
 
 	// z1 := curve.Scalar().Pick(curve.RandomStream())
 	// z2 := curve.Scalar().Pick(curve.RandomStream())
-	// z1 := R_i
-	z2 := x_i
-	Z1 := curve.Point().Mul(R_i, g)
-	fmt.Println("COMPUTED U_i:", Z1.String(), "\n")
+	// X_i := curve.Point().Mul(z2, g)
 
-	Z2 := curve.Point().Mul(z2, g)
-	// var Z2 =
+	// Z1 := curve.Point().Mul(z1, g)
 
-	// Hashing_message := Message + Z1.String()
+	// Hashing_message := Message + U.String()
 	// h, _ := hash_sign([]byte(Hashing_message))
 	// var H1 kyber.Scalar
 	// H1 = curve.Scalar().Zero()
@@ -849,19 +859,14 @@ func Signing(peer_number, Message string) {
 
 	// prod := curve.Scalar().Mul(H1, z2)
 	// Z3 := curve.Scalar().Add(z1, prod)
-	var Z3 kyber.Scalar
-	fmt.Println(Z1.String(), "\n\n", z2.String(), "\n\n", Message, Z1.String(), "\n\n\n")
-	Z3, Z4 := Signing_T_Unkown(Z1, z2, Message, peer_number)
 
-	fmt.Println(Z3.String(), Z4.String(), "\n\n")
+	// if Verify_sign_share(Z3, U, Z1, Message, X_i) {
+	// 	fmt.Println("Test SHARES ARE VERIFIED")
+	// } else {
+	// 	fmt.Println("NOT VERIFIED TEst Shares")
+	// }
 
-	if verify_final_sign(Z3, Z4, Message, Z2) {
-		fmt.Println("Test SHARES ARE VERIFIED")
-	} else {
-		fmt.Println("NOT VERIFIED TEst Shares")
-	}
-
-	if verify_final_sign(V_i, U_i, Message, X) {
+	if Verify_sign_share(V_i, U, U_i, Message, X_i) {
 		fmt.Println("INDIVIDUAL SHARES ARE VERIFIED")
 	} else {
 		fmt.Println("NOT VERIFIED INDIVIDUAL SHARES")
@@ -879,25 +884,25 @@ func Signing(peer_number, Message string) {
 
 	wait_until(15)
 
-	status_struct.Phase = 16
+	// status_struct.Phase = 16
 
-	tosend, _ = encoding.PointToStringHex(curve, U)
-	send_data(peer_details_list, tosend, "U", protocolID)
+	// tosend, _ = encoding.PointToStringHex(curve, U)
+	// send_data(peer_details_list, tosend, "U", protocolID)
 
 	// wait_until(16)
 	// choice = 4
 	// time.Sleep(time.Second * 2)
 	fmt.Println("************ COMBINATION PHASE ****************")
 	T_arr := [...]int{1} //not actually used
-	combine_T_Unknown(T_arr[:], peer_number)
+	Vsum, _ := combine_T_Unknown(T_arr[:], peer_number, Message)
 	fmt.Println("************ VERIFYING ****************")
-	file, _ = os.Open("Received/Signing/" + peer_number + "/V.txt")
-	V, _ := encoding.ReadHexScalar(curve, file)
-	file, _ = os.Open("Received/Signing/" + peer_number + "/U.txt")
-	U2, _ := encoding.ReadHexPoint(curve, file)
+	// file, _ = os.Open("Received/Signing/" + peer_number + "/V.txt")
+	// V, _ := encoding.ReadHexScalar(curve, file)
+	// file, _ = os.Open("Received/Signing/" + peer_number + "/U.txt")
+	// U2, _ := encoding.ReadHexPoint(curve, file)
 
 	GK := Get_Group_Key(int64(Peer_Count))
-	res := verify_final_sign(V, U2, Message, GK)
+	res := Verify_sign_share(Vsum, U, U, Message, GK)
 	if res {
 		fmt.Println("SUCCESS VERIFICATION OF SIGNATURE")
 	} else {
