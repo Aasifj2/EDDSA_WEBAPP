@@ -66,11 +66,7 @@ var Threshold int
 
 var Group_key kyber.Point
 
-<<<<<<< HEAD
 var port = ":8081"
-=======
-var port = ":8082"
->>>>>>> c725971dfb58bb9b044d4bbb634ad806405cc870
 
 var keygenFlag = false
 

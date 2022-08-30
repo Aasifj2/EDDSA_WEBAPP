@@ -103,16 +103,9 @@ func Sign_Message(w http.ResponseWriter, r *http.Request) {
 	Message := r.FormValue("message")
 	peer_number := fmt.Sprint(my_index + 1)
 	Signing(peer_number, Message)
-<<<<<<< HEAD
 	tmpl.ExecuteTemplate(w, "final.html", struct {
 		P2p_send P2P
 		Mydata   Verify_sign
-=======
-
-	tmpl.ExecuteTemplate(w, "nondealer.html", struct {
-		P2p_send        P2P
-		verified_value1 Verify_sign
->>>>>>> c725971dfb58bb9b044d4bbb634ad806405cc870
 	}{p2p, verified_value})
 
 }
