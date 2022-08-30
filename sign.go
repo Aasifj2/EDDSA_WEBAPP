@@ -72,6 +72,14 @@ func Get_Sum_alpha0(Peer_Count int64) kyber.Point {
 	var i int64
 	sum := curve.Point().Null()
 	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
+			path2 := "vss/Signing/" + fmt.Sprint(i) + "/alpha0.txt"
+
+			file2, _ := os.Open(path2)
+			temp, _ := encoding.ReadHexPoint(curve, file2)
+			sum = sum.Add(sum, temp)
+			continue
+		}
 		path := "Broadcast/" + strconv.Itoa(int(i)) + "/Signing/Alphas/alpha0.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexPoint(curve, file)

@@ -14,11 +14,10 @@
                                 <br>
                         
                                 <h2>Your IP: <b>{{.P2p_send.Host_ip}}</b><br></h2>
-                                <h3>Enter the <b>Message</b></h3><br>
-                                <form method="POST" action="/signing">
-                                        <input type="text" name="message"><br>
-                                        <input style="padding:10px" type="submit" value="Create-Signature">
-                                </form><br>
+                               
+                                <h1>Sign Verified: <b style="color:cyan">{{.verified_value.Verify_bool}}</b><br></h1>
+                                <h2>Sign: <b>{{.verified_value.Sign}}</b><br></h2>
+                                <h2>Group Key: <b>{{.verified_value.Gkey}}</b><br></h2>
                                 
                                 <!-- <form method="POST" action="/signing">
                                         <input type="submit" value="Signing" >
