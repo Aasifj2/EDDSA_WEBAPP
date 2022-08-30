@@ -180,17 +180,17 @@ func combine_T_Unknown(T_arr []int, peer_number, Message string) (kyber.Scalar, 
 		prod := curve.Scalar().Mul(Lambda_i, V_i)
 		Vsum = Vsum.Add(Vsum, prod)
 
-		// path2 := "Broadcast/" + fmt.Sprint(i) + "/Signing/U_i.txt"
-		// file, err = os.Open(path2)
-		// if err != nil {
-		// 	continue
-		// }
 		// // Lambda_i2 := Lambda(int64(T), int64(i))
 		// U_i, _ := encoding.ReadHexPoint(curve, file)
 		// prod2 := curve.Point().Mul(Lambda_i2, U_i)
 		// Usum = Usum.Add(Usum, prod2)
-		path2 := "Data/" + strconv.Itoa(int(i)) + "/Signing/U_i.txt"
-		file2, _ := os.Open(path2)
+		// path2 := "Data/" + strconv.Itoa(int(i)) + "/Signing/U_i.txt"
+		// file2, _ := os.Open(path2)
+		path2 := "Broadcast/" + fmt.Sprint(i) + "/Signing/U_i.txt"
+		file2, err := os.Open(path2)
+		if err != nil {
+			continue
+		}
 		temp, _ := encoding.ReadHexPoint(curve, file2)
 
 		prod2 := curve.Point().Mul(Lambda_i2, temp)
@@ -625,7 +625,7 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	f, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Signature_S" + ".txt")
 	status_struct.Phase = 9
 	send_data(peer_details_list, string(f), "Signature_S", protocolID)
-	// wait_until(9)
+	wait_until(9)
 
 	fmt.Println("Broadcasting PubKey ....")
 	f1, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/PubKey" + ".txt")
@@ -633,13 +633,13 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	fmt.Println("-->", string(f1))
 
 	send_data(peer_details_list, string(f1), "PubKey", protocolID)
-	// wait_until(10)
+	wait_until(10)
 
 	fmt.Println("Broadcasting Message ....")
 	f3, _ := os.ReadFile("Commitment/Signing/" + peer_number + "/KGC/Message" + ".txt")
 	status_struct.Phase = 11
 	send_data(peer_details_list, string(f3), "Message", protocolID)
-	// wait_until(11)
+	wait_until(11)
 
 	fmt.Println("Broadcasting KGD values ....")
 
@@ -785,17 +785,17 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	file, _ = os.Create("Data/" + peer_number + "/Signing/U_i.txt")
 	encoding.WriteHexPoint(curve, file, U_i)
 
-	if verify_R_i(int64(Peer_Count), T) {
-		fmt.Println("VERIFIED Ri")
-	} else {
-		fmt.Println("NOT VERIFIED Ri")
-	}
+	// if verify_R_i(int64(Peer_Count), T) {
+	// 	fmt.Println("VERIFIED Ri")
+	// } else {
+	// 	fmt.Println("NOT VERIFIED Ri")
+	// }
 
-	// U_i_sending, _ := os.ReadFile("Data/" + peer_number + "/Signing/U_i.txt")
+	U_i_send, _ := os.ReadFile("Data/" + peer_number + "/Signing/U_i.txt")
 
-	// status_struct.Phase = 8
-	// send_data(peer_details_list, string(U_i_sending), "U_i", protocolID)
-	// wait_until(8)
+	status_struct.Phase = 15
+	send_data(peer_details_list, string(U_i_send), "U_i", protocolID)
+	wait_until(15)
 
 	file3, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
@@ -925,13 +925,13 @@ func Signing(peer_number, Message string) {
 	encoding.WriteHexScalar(curve, file, V_i)
 
 	//Broadcasting V_i
-	status_struct.Phase = 15
+	status_struct.Phase = 16
 
 	fmt.Println(this_vault, my_index, peer_details_list)
 	tosend, _ := encoding.ScalarToStringHex(curve, V_i)
 	send_data(peer_details_list, tosend, "V_i", protocolID)
 
-	Wait_until_for_sign(15, T)
+	Wait_until_for_sign(16, T)
 
 	// status_struct.Phase = 16
 
