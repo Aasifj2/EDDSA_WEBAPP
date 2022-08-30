@@ -95,11 +95,11 @@ func Generate_share(N int64, T int64, coeff []kyber.Scalar, shares []kyber.Scala
 		panic(err)
 	}
 	path += "/Indivisual_Share"
-	for i = 0; i <= N; i++ {
+	for i = 1; i <= N; i++ {
 		file, _ := os.Create(path + strconv.Itoa(int(i)) + ".txt")
-		shares[i] = f_of_i(i+1, T, coeff)
+		shares[i-1] = f_of_i(i, T, coeff)
 		//fmt.Println(share)                          //to calculate f(i)
-		encoding.WriteHexScalar(curve, file, shares[i]) //writing share to the file
+		encoding.WriteHexScalar(curve, file, shares[i-1]) //writing share to the file
 		file.Close()
 	}
 	fmt.Printf("Share Generation for Peer %s Completed \n", peer_number)
@@ -264,12 +264,12 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool) kyber.Scal
 	}
 
 	share := []kyber.Scalar{} // to store share
-	for i = 0; i <= int64(N); i++ {
+	for i = 0; i < int64(N); i++ {
 		share = append(share, curve.Scalar().Zero())
 	}
 
-	for i = 0; i <= N; i++ {
-		if i == int64(my_index) { //To Add own share to G_i
+	for i = 1; i <= N; i++ {
+		if i == int64(my_index+1) { //To Add own share to G_i
 
 			file, err := os.Open(path2)
 			if err != nil {
@@ -279,7 +279,7 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool) kyber.Scal
 			if e1 != nil {
 				panic(e1)
 			}
-			share[i] = val
+			share[i-1] = val
 			continue
 
 		}
@@ -292,16 +292,16 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool) kyber.Scal
 		if e1 != nil {
 			panic(e1)
 		}
-		share[i] = val
+		share[i-1] = val
 	}
 
 	verify_each_share(peer_number, N, share, T, signing)
 
 	var G_i kyber.Scalar
 	G_i = curve.Scalar().Zero()
-	for i = 0; i <= int64(N); i++ {
+	for i = 1; i <= int64(N); i++ {
 
-		G_i.Add(share[i], G_i)
+		G_i.Add(share[i-1], G_i)
 
 	}
 	return G_i
@@ -356,8 +356,8 @@ func Verify_Share_sign(peer_number string, N int64, T int64) kyber.Scalar {
 func verify_each_share(peer_number string, peer_count int64, share []kyber.Scalar, T int64, signing bool) {
 	var i int64
 	fmt.Printf("Verifying shares Recieved By %s \n", peer_number)
-	for i = 0; i <= peer_count; i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= peer_count; i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		var j int64
@@ -387,13 +387,13 @@ func verify_each_share(peer_number string, peer_count int64, share []kyber.Scala
 			panic(err)
 		}
 		fmt.Println("INSDIE VerifyEachShare")
-		fmt.Println("share->", share[i].String())
+		fmt.Println("share->", share[i-1].String())
 		var k int
 		for k = 0; k < int(T); k++ {
 			fmt.Println(alphas[k].String())
 		}
 		fmt.Println("")
-		if !Verify_i(int64(I), share[i], T, alphas) {
+		if !Verify_i(int64(I), share[i-1], T, alphas) {
 			fmt.Printf("Peer %d shared wrong values mission aborting \n", i)
 		} else {
 			fmt.Printf("Shared Verified for Peer %d \n", i)

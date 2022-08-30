@@ -167,7 +167,7 @@ func process_input(s network.Stream, h host.Host) error {
 
 		// res1:= peer_index[s.Conn().RemotePeer().String()]
 		// log.Println("Hey look at me IN PHASE 2", res1, message_receive.Name, peer_map, my_index)
-		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1) + "/" + message_receive.Name + ".txt")
+		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1+1) + "/" + message_receive.Name + ".txt")
 
 		_f.WriteString(message_receive.Value)
 
@@ -183,7 +183,7 @@ func process_input(s network.Stream, h host.Host) error {
 	} else if message_receive.Phase == 3 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 
-		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1) + "/" + message_receive.Name + ".txt")
+		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1+1) + "/" + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
 		// fmt.Println("Encrypted Shares received")
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
@@ -192,7 +192,7 @@ func process_input(s network.Stream, h host.Host) error {
 
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 
-		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1) + "/" + message_receive.Name + ".txt")
+		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1+1) + "/" + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
 		// fmt.Println("Encrypted Shares received")
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
@@ -201,7 +201,7 @@ func process_input(s network.Stream, h host.Host) error {
 
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 
-		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1) + "/" + message_receive.Name + ".txt")
+		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1+1) + "/" + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
 		// fmt.Println("Encrypted Shares received")
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
@@ -209,11 +209,11 @@ func process_input(s network.Stream, h host.Host) error {
 	} else if message_receive.Phase == 6 {
 
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Alphas/"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Alphas/"
 		os.MkdirAll(path, 0755)
 		_f, _ := os.Create(path + "alpha" + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
-		fmt.Println("Alpha Recieved from peer :", fmt.Sprint(res1))
+		fmt.Println("Alpha Recieved from peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
 	} else if message_receive.Phase == 7 {
@@ -222,7 +222,7 @@ func process_input(s network.Stream, h host.Host) error {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 		ij := strings.Split(message_receive.Name, ",")
 		//"C's/" + fmt.Sprint(i) + "/" + peer_number + "/C1.txt"
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Shares/To" + ij[0]
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Shares/To" + ij[0]
 		os.MkdirAll(path, os.ModePerm)
 		_f, _ := os.Create(path + "/C" + ij[1] + ".txt")
 		_f.WriteString(message_receive.Value)
@@ -230,7 +230,7 @@ func process_input(s network.Stream, h host.Host) error {
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 	} else if message_receive.Phase == 8 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/"
 		os.MkdirAll(path, 0755)
 		_f, _ := os.Create(path + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
@@ -240,44 +240,44 @@ func process_input(s network.Stream, h host.Host) error {
 
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
 
-		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1) + "/Signing/" + message_receive.Name + ".txt")
+		_f, _ := os.Create("Broadcast/" + fmt.Sprint(res1+1) + "/Signing/" + message_receive.Name + ".txt")
 
 		_f.WriteString(message_receive.Value)
 
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 	} else if message_receive.Phase == 13 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/Alphas/"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/Alphas/"
 		os.MkdirAll(path, 0755)
 		_f, _ := os.Create(path + "alpha" + message_receive.Name + ".txt")
 		_f.WriteString(message_receive.Value)
-		fmt.Println("Sign Alpha Recieved from peer :", fmt.Sprint(res1))
+		fmt.Println("Sign Alpha Recieved from peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 	} else if message_receive.Phase == 14 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/Shares/"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/Shares/"
 		os.MkdirAll(path, 0755)
 		file, _ := os.OpenFile(path+"shareTo"+message_receive.Name+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 		//_f, _ := os.Create(path + "shareTo" + message_receive.Name + ".txt")
 		//_f.WriteString(message_receive.Value)
 		_, _ = fmt.Fprint(file, message_receive.Value)
 
-		fmt.Println("Sign Shares Recieved from peer :", fmt.Sprint(res1))
+		fmt.Println("Sign Shares Recieved from peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 	} else if message_receive.Phase == 15 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/V_i.txt"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/V_i.txt"
 		_f, _ := os.Create(path)
 		_f.WriteString(message_receive.Value)
-		fmt.Println("V Broadcasted By peer :", fmt.Sprint(res1))
+		fmt.Println("V Broadcasted By peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
 	} else if message_receive.Phase == 16 {
 		res1 := peer_index[peer_map[s.Conn().RemotePeer().String()]]
-		path := "Broadcast/" + fmt.Sprint(res1) + "/Signing/U.txt"
+		path := "Broadcast/" + fmt.Sprint(res1+1) + "/Signing/U.txt"
 		_f, _ := os.Create(path)
 		_f.WriteString(message_receive.Value)
-		fmt.Println("U Broadcasted By peer :", fmt.Sprint(res1))
+		fmt.Println("U Broadcasted By peer :", fmt.Sprint(res1+1))
 		acknowledge(s.Conn().RemotePeer().String(), message_receive.Phase, h)
 
 	}

@@ -273,7 +273,7 @@ func verify_GK(Peer_Count int64, T int64) bool {
 	GK := Get_Group_Key(Peer_Count)
 	sum := curve.Scalar().Zero()
 	var i int64
-	for i = 0; i <= Peer_Count; i++ {
+	for i = 1; i <= Peer_Count; i++ {
 		path := "Received/" + strconv.Itoa(int(i)) + "/G.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexScalar(curve, file)
@@ -309,8 +309,8 @@ func keygen() {
 	time.Sleep(time.Second * 5)
 	// fmt.Println(GeneratePrime(1024))
 
-	peer_number := fmt.Sprint(my_index)
-	Peer_Count := len(peer_details_list) - 1
+	peer_number := fmt.Sprint(my_index + 1)
+	Peer_Count := len(peer_details_list)
 	fmt.Println("PEERCOUNT:", Peer_Count)
 	fmt.Println("MYINDEX:", peer_number)
 	var T int64 = int64(Threshold)
@@ -398,7 +398,7 @@ func keygen() {
 	file, _ := ioutil.ReadFile("Data/" + peer_number + "/EPK.txt")
 	status_struct.Phase = 1
 	log.Println(peer_details_list)
-	send_data(peer_details_list, string(file), strconv.Itoa(my_index), protocolID)
+	send_data(peer_details_list, string(file), strconv.Itoa(my_index+1), protocolID)
 	wait_until(1)
 
 	//VERIFICATION FOR ELGAMAL KEYS AS WELL
@@ -445,23 +445,23 @@ func keygen() {
 
 	var i int64
 	//Recieving KGC from peers
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		Recieve_KGC(strconv.Itoa(int(i)))
 	}
 	//Recieving KGD from peers
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		Recieve_KGD(strconv.Itoa(int(i)))
 	}
 
 	//Decomiting Values
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		y_j := Decommitment_j(strconv.Itoa(int(i)))
@@ -501,7 +501,7 @@ func keygen() {
 		alphas = append(alphas, curve.Point().Null())
 	}
 
-	for i = 0; i <= int64(Peer_Count); i++ {
+	for i = 1; i <= int64(Peer_Count); i++ {
 		share = append(share, curve.Scalar().Zero())
 	}
 
@@ -512,7 +512,7 @@ func keygen() {
 	//Generating Alphas
 	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
 	//
-	Path := "vss/" + strconv.Itoa(my_index)
+	Path := "vss/" + peer_number
 	for i = 0; i < T; i++ {
 		path1 := Path + "/Initial_coeff" + strconv.Itoa(int(i)) + ".txt"
 		file, e2 := os.Create(path1)
@@ -531,9 +531,9 @@ func keygen() {
 		file.Close()
 	}
 	path1 := Path + "/Curr_Share"
-	for i = 0; i <= int64(Peer_Count); i++ {
+	for i = 1; i <= int64(Peer_Count); i++ {
 		file, _ := os.Create(path1 + strconv.Itoa(int(i)) + ".txt")
-		encoding.WriteHexScalar(curve, file, share[i]) //writing share to the file
+		encoding.WriteHexScalar(curve, file, share[i-1]) //writing share to the file
 		file.Close()
 	}
 	//Broadcasting alphas
@@ -573,8 +573,8 @@ func keygen() {
 	path3 := "vss/" + peer_number
 
 	// var i int64
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 
@@ -689,8 +689,8 @@ func keygen() {
 	Reciever_ESK, _ := Get_ESK(path4 + "/ESK.txt")
 
 	// var i int64
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 
