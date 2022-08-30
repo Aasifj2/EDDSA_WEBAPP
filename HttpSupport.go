@@ -79,11 +79,11 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 
 	Threshold = tempT
 	gen_keyshares(IPs)
-	peer_number := fmt.Sprint(my_index)
+	peer_number := fmt.Sprint(my_index + 1)
 	path := "Received/" + peer_number
 	file, _ := os.Open(path + "/GroupKey.txt")
 	GK, _ := encoding.ReadHexPoint(curve, file)
-	fmt.Println("GROUP KEY:", GK.String())
+	// fmt.Println("GROUP KEY:", GK.String())
 	recieved_data := Keygen_Data{
 		IP_addresses: IPs,
 		Threshold_T:  tempT,
@@ -101,7 +101,7 @@ func DisplayData(w http.ResponseWriter, r *http.Request) {
 // func Init_vault(){
 func Sign_Message(w http.ResponseWriter, r *http.Request) {
 	Message := r.FormValue("message")
-	peer_number := fmt.Sprint(my_index)
+	peer_number := fmt.Sprint(my_index + 1)
 	Signing(peer_number, Message)
 
 }

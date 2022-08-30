@@ -127,7 +127,7 @@ func Broadcast_Ui(peer_number int64, U_i kyber.Point) {
 
 func combine_T_Unknown(T_arr []int, peer_number string) {
 	Peer_Count := len(peer_details_list) - 1
-	l := len(T_arr)
+	T := Threshold
 	var Vsum kyber.Scalar = curve.Scalar().Zero()
 	// err := os.MkdirAll("Received/Signing/Combine", os.ModePerm)
 	// if err != nil {
@@ -135,13 +135,13 @@ func combine_T_Unknown(T_arr []int, peer_number string) {
 	// }
 	var Usum kyber.Point = curve.Point().Null()
 
-	for i := 0; i <= Peer_Count; i++ {
+	for i := 1; i <= Peer_Count; i++ {
 		path := "Broadcast/" + fmt.Sprint(i) + "/Signing/V_i.txt"
 		file, err := os.Open(path)
 		if err != nil {
 			continue
 		}
-		Lambda_i := Lambda(int64(l), int64(i))
+		Lambda_i := Lambda(int64(T), int64(i))
 		V_i, _ := encoding.ReadHexScalar(curve, file)
 
 		prod := curve.Scalar().Mul(Lambda_i, V_i)
@@ -396,10 +396,10 @@ func Decommitment(N int64) {
 // }
 
 //Function used for signing
-func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, R_i kyber.Scalar, Message string, peer_number string) (kyber.Scalar, kyber.Point) {
+func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_number string) (kyber.Scalar, kyber.Point) {
 
-	// file, _ := os.Open("Received/Signing/" + peer_number + "/R_i.txt")
-	// R_i, _ := encoding.ReadHexScalar(curve, file)
+	file, _ := os.Open("Received/Signing/" + peer_number + "/R_i.txt")
+	R_i, _ := encoding.ReadHexScalar(curve, file)
 	U_i := curve.Point().Mul(R_i, g)
 
 	var T int64 = int64(Threshold)
@@ -489,8 +489,8 @@ func Sign_T_Unknown(T int64, Peer_Count int64, g kyber.Point, Message string, x_
 	/*******************************Signing**********************/
 	for i = 1; i <= Peer_Count; i++ {
 		peer_number := strconv.Itoa(int(i))
-		R_i := Read_Ri(peer_number)
-		V_i, _ := Signing_T_Unkown(U, x_i[i], R_i, Message, peer_number)
+		// R_i := Read_Ri(peer_number)
+		V_i, _ := Signing_T_Unkown(U, x_i[i], Message, peer_number)
 		path := "Broadcast/V_" + peer_number + ".txt"
 		file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 		if err != nil {
@@ -598,23 +598,23 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	// case 11:
 	var i int64
 	//Recieving KGC from peers
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		Recieve_KGC_sign(strconv.Itoa(int(i)))
 	}
 	//Recieving KGD from peers
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		Recieve_KGD_sign(strconv.Itoa(int(i)))
 	}
 
 	//Decomiting Values
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		y_j := Decommitment_j_sign(strconv.Itoa(int(i)))
@@ -653,7 +653,7 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 		alphas = append(alphas, curve.Point().Null())
 	}
 
-	for i = 0; i <= int64(Peer_Count); i++ {
+	for i = 1; i <= int64(Peer_Count); i++ {
 		share = append(share, curve.Scalar().Zero())
 	}
 
@@ -681,7 +681,7 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	//Broadcasting Share
 	status_struct.Phase = 14
 	paths := "vss/Signing/" + peer_number
-	for i = 0; i <= int64(Peer_Count); i++ {
+	for i = 1; i <= int64(Peer_Count); i++ {
 		_f, _ := os.Open(paths + "/Indivisual_Share" + strconv.Itoa(int(i)) + ".txt")
 		shares, _ := encoding.ReadHexScalar(curve, _f)
 		tosend := shares.String()
@@ -749,8 +749,8 @@ func Presigning_T_Unknown(peer_number string, Peer_Count int64) {
 	U = curve.Point().Null()
 	fmt.Println("U_i's : ")
 	// var i int
-	for i = 0; i <= int64(Peer_Count); i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(my_index+1) {
 			path := "Data/" + fmt.Sprint(i) + "/Signing/U_i.txt"
 			file, err := os.Open(path)
 			if err != nil {
@@ -826,14 +826,14 @@ func Signing(peer_number, Message string) {
 	// file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
 	// U, _ := encoding.ReadHexPoint(curve, file)
 
-	V_i, U_i := Signing_T_Unkown(U, x_i, R_i, Message, peer_number)
+	V_i, U_i := Signing_T_Unkown(U, x_i, Message, peer_number)
 	fmt.Println("U_i returned from sign:", U_i.String(), "\n")
 
 	X := curve.Point().Mul(x_i, g)
 
 	// z1 := curve.Scalar().Pick(curve.RandomStream())
 	// z2 := curve.Scalar().Pick(curve.RandomStream())
-	z1 := R_i
+	// z1 := R_i
 	z2 := x_i
 	Z1 := curve.Point().Mul(R_i, g)
 	fmt.Println("COMPUTED U_i:", Z1.String(), "\n")
@@ -851,7 +851,7 @@ func Signing(peer_number, Message string) {
 	// Z3 := curve.Scalar().Add(z1, prod)
 	var Z3 kyber.Scalar
 	fmt.Println(Z1.String(), "\n\n", z2.String(), "\n\n", Message, Z1.String(), "\n\n\n")
-	Z3, Z4 := Signing_T_Unkown(Z1, z2, z1, Message, peer_number)
+	Z3, Z4 := Signing_T_Unkown(Z1, z2, Message, peer_number)
 
 	fmt.Println(Z3.String(), Z4.String(), "\n\n")
 

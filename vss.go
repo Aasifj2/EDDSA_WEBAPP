@@ -450,8 +450,8 @@ func verify_each_share_sign(peer_number string, peer_count int64, share []kyber.
 func Recieve_Share_sign(peer_number string, Peer_Count int64) {
 	var i int64
 
-	for i = 0; i <= Peer_Count; i++ {
-		if i == int64(my_index) {
+	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
 			continue
 		}
 		// path := "Broadcast/" + fmt.Sprint(i) + "/Signing/Shares/shareTo" + peer_number + ".txt"
