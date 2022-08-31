@@ -8,6 +8,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -49,12 +50,13 @@ func process_connection(s network.Stream, h host.Host) error {
 			Threshold = message_receive.T
 		}
 	}
-	if execute_send == 0 {
-		execute_send = 1
+
+	if execute_send == 0 && execute_send != -1 {
+		execute_send = -1
 		test()
 
 	} else {
-
+		time.Sleep(time.Second)
 		log.Println(len(vault_map), len(peer_details_list))
 		if len(vault_map) == len(peer_details_list) {
 			keys := make([]string, 0)

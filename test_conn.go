@@ -100,7 +100,7 @@ func test() {
 			log.Println("Connected to: ", peer_ip)
 		}
 		message_send := message_conn{
-			Type:       1, //Type 1 -> Dealer to Non Dealer
+			Type:       2, //Type 1 -> Dealer to Non Dealer
 			Peers:      peer_details_list,
 			Vault_name: this_vault,
 			Sender:     p2p.Host_ip,
@@ -122,8 +122,9 @@ func test() {
 
 	}
 
-	log.Println(len(vault_map), len(peer_details_list))
+	log.Println(vault_map, len(peer_details_list))
 
+	// time.Sleep(time.Second)
 	if len(vault_map) == len(peer_details_list) {
 		keys := make([]string, 0, len(vault_map))
 		for k := range vault_map {
