@@ -112,6 +112,7 @@ func Sign_Message(w http.ResponseWriter, r *http.Request) {
 }
 
 func DisplayNonDealer(w http.ResponseWriter, r *http.Request) {
+	execute_send = 0
 	this_vault = r.FormValue("vaultID2")
 	fmt.Println("VALULT ND:", this_vault)
 

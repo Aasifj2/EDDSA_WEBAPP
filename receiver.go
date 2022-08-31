@@ -6,12 +6,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strings"
-	"time"
 
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
+	peer "github.com/libp2p/go-libp2p-core/peer"
 	// "gopkg.in/dedis/kyber.v2/util/encoding"
 )
 
@@ -42,50 +41,73 @@ func process_connection(s network.Stream, h host.Host) error {
 	bytes := []byte(str)
 	var message_receive message_conn
 	json.Unmarshal(bytes, &message_receive)
+
 	if message_receive.Type == 1 {
 		peer_details_list = message_receive.Peers
-		vault := message_receive.Vault_name
-		vault_map[vault] = message_receive.Sender
-		if Threshold == 0 {
-			Threshold = message_receive.T
+
+		vault_map = message_receive.Vault_Map
+
+		Threshold = message_receive.T
+		peer_index = message_receive.Peer_index
+
+		for i, peer_ip := range peer_details_list {
+
+			if peer_details_list[i] == p2p.Host_ip {
+				// this_vault = port
+				// vault_map[this_vault] = peer_ip
+				peer_map[strings.Split(peer_ip, "/")[len(strings.Split(peer_ip, "/"))-1]] = peer_ip
+				my_index = i
+				continue
+			}
+			connect_to, err := peer.AddrInfoFromString(peer_ip)
+			if err != nil {
+				log.Println(err)
+			}
+			if err := p2p.Host.Connect(p2p.Ctx, *connect_to); err != nil {
+				log.Println("Connection failed:", peer_ip)
+				all_ok = false
+
+			} else {
+				log.Println("Connected to: ", peer_ip)
+			}
+			peer_map[strings.Split(peer_ip, "/")[len(strings.Split(peer_ip, "/"))-1]] = peer_ip
 		}
+
+		keygen()
+
+	}
+	if message_receive.Type == 3 {
+		connect_to, err := peer.AddrInfoFromString(message_receive.Sender)
+		if err != nil {
+			log.Println(err)
+		}
+		if err := p2p.Host.Connect(p2p.Ctx, *connect_to); err != nil {
+			all_ok = false
+		}
+		message_send := message_conn{
+			Type:       4,
+			Vault_name: this_vault,
+			Sender:     p2p.Host_ip,
+		}
+		s, err := p2p.Host.NewStream(p2p.Ctx, connect_to.ID, "/conn/0.0.1")
+		if err != nil {
+			log.Println(peer_map[message_receive.Sender])
+			log.Println(err, "Connecting to send message error")
+
+		}
+
+		b_message, err := json.Marshal(message_send)
+		if err != nil {
+			log.Println(err, "Error in jsonifying data")
+
+		}
+		s.Write(append(b_message, '\n'))
+
+	}
+	if message_receive.Type == 4 {
+		vault_map[message_receive.Vault_name] = message_receive.Sender
 	}
 
-	if execute_send == 0 && execute_send != -1 {
-		execute_send = -1
-		test()
-
-	} else {
-		time.Sleep(time.Second)
-		log.Println(len(vault_map), len(peer_details_list))
-		if len(vault_map) == len(peer_details_list) {
-			keys := make([]string, 0)
-			for k := range vault_map {
-
-				keys = append(keys, k)
-			}
-			sort.Strings(keys)
-
-			for i, k := range keys {
-
-				log.Println(k, "->key")
-				copy = append(copy, vault_map[k])
-				// peer_details_list[i] = vault_map[k]
-				log.Println(string(vault_map[k]), string(p2p.Host_ip))
-				if string(vault_map[k]) == string(p2p.Host_ip) {
-					my_index = i
-
-				}
-				peer_index[vault_map[k]] = i
-
-			}
-
-			peer_details_list = copy
-			log.Println(peer_details_list, my_index)
-		}
-		// test()
-		return nil
-	}
 	return nil
 }
 

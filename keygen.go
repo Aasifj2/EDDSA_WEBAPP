@@ -1134,7 +1134,6 @@ func send_data(peer_details_list []string, value string, name string, protocolID
 	log.Println("Sending phase:", status_struct.Phase)
 	for i, item := range peer_details_list {
 
-		// log.Println(peer_details_list)
 		// log.Println(i, p2p.Host_ip, item, my_index)
 		//log.Println(i, my_index, p2p.Host_ip, item)
 		if i == my_index {
@@ -1159,6 +1158,7 @@ func send_data(peer_details_list []string, value string, name string, protocolID
 		s, err := p2p.Host.NewStream(p2p.Ctx, peer_info.ID, protocolID)
 		if err != nil {
 			log.Println(peer_map[item])
+			log.Println(item)
 			log.Println(err, "Connecting to send message error")
 			return
 		}

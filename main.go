@@ -66,6 +66,7 @@ func main() {
 	defaults()
 	p2p = *start_p2p()
 	if debug == true {
+		Threshold = 2
 		local()
 
 	} else {

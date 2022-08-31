@@ -20,4 +20,6 @@ type message_conn struct {
 	Vault_name string
 	Sender     string
 	T          int
+	Vault_Map  map[string]string
+	Peer_index map[string]int
 }
