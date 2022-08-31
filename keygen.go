@@ -1137,7 +1137,7 @@ func send_data(peer_details_list []string, value string, name string, protocolID
 		// log.Println(peer_details_list)
 		// log.Println(i, p2p.Host_ip, item, my_index)
 		//log.Println(i, my_index, p2p.Host_ip, item)
-		if i == my_index {
+		if i == my_index+1 {
 			continue
 		}
 		addr, _ := multiaddr.NewMultiaddr(item)
@@ -1202,13 +1202,13 @@ func wait_until(phase int) {
 		}
 		if flag == 1 {
 
-			time.Sleep(time.Millisecond * 10)
+			time.Sleep(time.Millisecond * 20)
 			// log.Println(flag, phase, receive_peer_phase, sent_peer_phase)
 			flag = 0
 			continue
 		}
 		fmt.Println("Returning from phase ", phase)
-		// time.Sleep(time.Second)
+		time.Sleep(time.Second)
 		// log.Println(phase, receive_peer_phase, sent_peer_phase)
 		return
 
